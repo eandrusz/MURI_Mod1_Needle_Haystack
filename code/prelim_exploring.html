@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>prelim_outline</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="prelim_exploring_files/libs/clipboard/clipboard.min.js"></script>
+<script src="prelim_exploring_files/libs/quarto-html/quarto.js"></script>
+<script src="prelim_exploring_files/libs/quarto-html/popper.min.js"></script>
+<script src="prelim_exploring_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="prelim_exploring_files/libs/quarto-html/anchor.min.js"></script>
+<link href="prelim_exploring_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="prelim_exploring_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="prelim_exploring_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="prelim_exploring_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="prelim_exploring_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+<link href="prelim_exploring_files/libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="prelim_exploring_files/libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">prelim_outline</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<p>We want to wrangle existing data in hand on methods comparison we have already done and then fill in gaps. Going to start by figuring out what samples we have and what we know about them and then we can fill analyses and formalize things. So basically this is exploratory and setting up for bigger picture.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.2     ✔ readr     2.1.4
+✔ forcats   1.0.0     ✔ stringr   1.5.0
+✔ ggplot2   3.4.2     ✔ tibble    3.2.1
+✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+✔ purrr     1.0.1     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>here() starts at /Users/eallan/Desktop/Projects/MURI/2023_Methods_Comparison</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cowplot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'cowplot'
+
+The following object is masked from 'package:lubridate':
+
+    stamp</code></pre>
+</div>
+</div>
+</section>
+<section id="volume-filtered-and-pore-size-test" class="level2">
+<h2 class="anchored" data-anchor-id="volume-filtered-and-pore-size-test">Volume filtered and pore size test</h2>
+<p>Getting data from the MURI google drive. Downloaded (on 10/24/23) from this google doc (https://docs.google.com/spreadsheets/d/1p8M0_PJOpVJpVYAjRic67Ak7A2-T42tB0i7HOFwxdME/edit#gid=1442692080) but only certain tabs.</p>
+<p>Volume filtered and pore size test was the tab labeled “01_bangor_fielddeployment1_Sept2022”.</p>
+<p>We then will only take the ones that are flagged as the task of “filter_vol”.</p>
+<p>Notes:</p>
+<ul>
+<li><p>A gigantic volume of water was collected and homogenized back at NOAA to try to reduce any true biological variability and really answer the question of volume / pore size filter.</p></li>
+<li><p>All were vacuum filtered back at the lab after ~2ish hours of transit?</p></li>
+<li><p>All were filtered on the same type of filter (PES I think?)</p></li>
+<li><p>All filters were then stored in Longmires and then extracted via PC.</p></li>
+</ul>
+<section id="total-dna-vs.-inhibition" class="level3">
+<h3 class="anchored" data-anchor-id="total-dna-vs.-inhibition">Total DNA vs.&nbsp;Inhibition</h3>
+<p>Start by looking at inhibition levels as measured by IPC… nothing amplified at 1:1 dilution, and then samples were all diluted 1:10, and then further if still inhibited. We can use the “inhibition value” which is the difference in Ct between the IPC/NTC and the IPC/sample as an indication of how inhibited each sample is. A higher inhibition value means more inhibitors in the sample.</p>
+<p>We would expect that: - larger volumes of water should have more total DNA, but also more inhibitors (we are essentially concentrating the inhibitors in the sample) - the smaller pore size filter might have more inhibition given the same volume filtered</p>
+<p>Later, we will look at the actual target concentration. Because more volume filtered should get us more target, but also more inhibitors. There may be a “sweet spot” of maximizing concentrating target but not so many inhibitors that our target is swamped out - or we have to dilute so much for the inhibitors that we dilute out our target.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>v_ps_raw <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>,<span class="st">"MURI_Module1_datasheets - 01_bangor_fielddeployment1_Sept2022.csv"</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>v_ps <span class="ot">&lt;-</span> v_ps_raw <span class="sc">%&gt;%</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(task <span class="sc">==</span> <span class="st">"filter_vol"</span>) <span class="sc">%&gt;%</span> <span class="co"># only keep samples used for the pore size x volume comparison </span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(extraction <span class="sc">==</span> <span class="st">"PC"</span>) <span class="sc">%&gt;%</span> <span class="co"># we collected a few via Smith Root and extracted with Qiagen, remove</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(lab_ID, rep, filter_size, vol_filtered, dilution_factor, DNA_20_conc, DNA_total_conc, Tt_Ct, </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>           Tt_conc, Tt_total_conc, IPC_CT, IPC_meanNTC, IPC_meanNTC_SD, inhibition_value, inhibited, use))</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="do">## </span><span class="al">NOTE</span><span class="do">: go back to raw later and get stats for efficiency, LOD, etc. for all runs</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co"># fill in total DNA for all samples </span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>v_ps_qubit <span class="ot">&lt;-</span> v_ps <span class="sc">%&gt;%</span> </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(lab_ID, DNA_total_conc)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(DNA_total_conc) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>() <span class="co"># there are multiple per row because of multiple dilutions - just need one per sample here </span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>v_ps2 <span class="ot">&lt;-</span> v_ps <span class="sc">%&gt;%</span> </span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(v_ps_qubit <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">total_DNA=</span>DNA_total_conc), <span class="at">by=</span> <span class="st">"lab_ID"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(lab_ID, total_DNA, inhibition_value, dilution_factor, filter_size, vol_filtered)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">inhibition_value =</span> <span class="fu">as.numeric</span>(inhibition_value)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_DNA =</span> <span class="fu">as.numeric</span>(total_DNA))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There was 1 warning in `mutate()`.
+ℹ In argument: `inhibition_value = as.numeric(inhibition_value)`.
+Caused by warning:
+! NAs introduced by coercion</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(v_ps2, <span class="fu">aes</span>(<span class="at">x=</span>total_DNA, <span class="at">y=</span>inhibition_value, </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">shape =</span> vol_filtered, <span class="at">color =</span> filter_size)) <span class="sc">+</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>dilution_factor) <span class="sc">+</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Total DNA Concentration (ng/uL)"</span>, <span class="at">y=</span> <span class="st">"Inhibition Value"</span>, <span class="at">shape =</span><span class="st">"Volume Filtered (L)"</span>, <span class="at">color =</span> <span class="st">"Filter Pore Size (um)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 6 rows containing missing values (`geom_point()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="prelim_exploring_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Ok - so we know that filtering 3x the volume does in fact get you much more total DNA (as expected). We also can clearly see that 1 um filters accumulate more total DNA than 5 um filters.</p>
+<p>It looks like in terms of inhibition, we don’t have to dilute 1 L samples as much as we need to dilute 3 L samples (of course) and maybe there is a small effect of pore size but not much.</p>
+<p>Basically, we proved the general rule of thumb that you really should only be putting in 1-5 ng of total DNA into a PCR reaction. Because if you look along the x-axis and see where things start to be not inhibited anymore and divide the total DNA by the dilution factor (facet), basically your sample is no longer inhibited when you are down in that 1-5 ng of total DNA range (here, we added 2 ul of template to a 10 ul reaction).</p>
+<p>But what about target DNA? Is more total DNA going to result in more target DNA? Or because we really can only put 1-5 ng into a PCR, do we just dilute the larger volume samples to give us the same target DNA? And what about pore size of filter?</p>
+</section>
+<section id="total-dna-vs.-target-dna" class="level3">
+<h3 class="anchored" data-anchor-id="total-dna-vs.-target-dna">Total DNA vs.&nbsp;Target DNA</h3>
+<p>Now, let’s only look at samples that are no longer inhibited (after dilution) and start looking at total vs.&nbsp;target DNA.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>v_ps_tt <span class="ot">&lt;-</span> v_ps <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(use <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> <span class="co"># only use the non-inhibited samples for actual quants of t tursiops </span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(inhibited <span class="sc">==</span> <span class="dv">0</span>) <span class="co"># looks like a few inhibited slipped through so get rid of those guys for now </span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>v_ps_total_box <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(v_ps_tt, <span class="fu">aes</span>(<span class="at">x=</span>vol_filtered, <span class="at">y=</span>DNA_total_conc, <span class="at">fill=</span>filter_size)) <span class="sc">+</span> </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Total Genomic DNA (ng/uL)"</span>, <span class="at">x =</span> <span class="st">"Volume Filtered (L)"</span>, <span class="at">title=</span><span class="st">"Total DNA"</span>) <span class="sc">+</span> </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">fill=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The `&lt;scale&gt;` argument of `guides()` cannot be `FALSE`. Use "none" instead as
+of ggplot2 3.3.4.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>v_ps_tt_box <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(v_ps_tt, <span class="fu">aes</span>(<span class="at">x=</span>vol_filtered, <span class="at">y=</span>Tt_total_conc, <span class="at">fill=</span>filter_size)) <span class="sc">+</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">"T. tursiops DNA (copies/uL)"</span>, <span class="at">x =</span> <span class="st">"Volume Filtered (L)"</span>, <span class="at">title =</span> <span class="st">"Target DNA"</span>, <span class="at">fill=</span><span class="st">"Filter Pore Size (um)"</span>) <span class="sc">+</span> </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">fill=</span><span class="cn">FALSE</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="do">## NOW RATIO!!! </span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>v_ps_tt <span class="ot">&lt;-</span> v_ps_tt <span class="sc">%&gt;%</span> </span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ratio_tt_total =</span> ((Tt_total_conc<span class="sc">/</span><span class="fl">1.132e+10</span>)<span class="sc">/</span>DNA_total_conc)<span class="sc">*</span><span class="dv">100</span>) </span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="do">## target is 86 bp - use NEB https://nebiocalculator.neb.com/#!/dsdnaamt</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="do">## 1.132e+10 copies of target = 1 ng of target </span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>v_ps_ratio_box <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(v_ps_tt, <span class="fu">aes</span>(<span class="at">x=</span>vol_filtered, <span class="at">y=</span>ratio_tt_total, <span class="at">fill=</span>filter_size)) <span class="sc">+</span> </span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> </span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Ratio of T. t to total DNA (%)"</span>, <span class="at">x =</span> <span class="st">"Volume Filtered (L)"</span>, <span class="at">title =</span> <span class="st">"Target:Total"</span>, <span class="at">fill=</span><span class="st">"Pore Size (um)"</span>)</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="co"># put plots next to each other </span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_grid</span>(v_ps_total_box, v_ps_tt_box,v_ps_ratio_box, </span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>          <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>),</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>          <span class="at">ncol =</span> <span class="dv">3</span>, <span class="at">nrow =</span> <span class="dv">1</span>, <span class="at">rel_widths =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="prelim_exploring_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># some summary statistics of the box plots </span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>v_ps_tt_summary <span class="ot">&lt;-</span> v_ps_tt <span class="sc">%&gt;%</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(filter_size, vol_filtered) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n=</span><span class="fu">n</span>(),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_total_DNA =</span> <span class="fu">mean</span>(DNA_total_conc), <span class="at">sd_total_DNA =</span> <span class="fu">sd</span>(DNA_total_conc), </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_tt_DNA =</span> <span class="fu">mean</span>(Tt_total_conc), <span class="at">sd_tt_DNA =</span> <span class="fu">sd</span>(Tt_total_conc),</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_ratio =</span> <span class="fu">mean</span>(ratio_tt_total), <span class="at">sd_ratio =</span> <span class="fu">sd</span>(ratio_tt_total)) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_cv =</span> sd_total_DNA<span class="sc">/</span>mean_total_DNA) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tt_cv =</span> sd_tt_DNA<span class="sc">/</span>mean_tt_DNA) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ratio_cv =</span> sd_ratio<span class="sc">/</span>mean_ratio)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'filter_size'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>rmarkdown<span class="sc">::</span><span class="fu">paged_table</span>(v_ps_tt_summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["filter_size"],"name":[1],"type":["chr"],"align":["left"]},{"label":["vol_filtered"],"name":[2],"type":["chr"],"align":["left"]},{"label":["n"],"name":[3],"type":["int"],"align":["right"]},{"label":["mean_total_DNA"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["sd_total_DNA"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["mean_tt_DNA"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["sd_tt_DNA"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["mean_ratio"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["sd_ratio"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["total_cv"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["tt_cv"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["ratio_cv"],"name":[12],"type":["dbl"],"align":["right"]}],"data":[{"1":"1um","2":"1L","3":"9","4":"51.40000","5":"3.934463","6":"7172.033","7":"1030.7212","8":"1.229671e-06","9":"1.154986e-07","10":"0.07654597","11":"0.14371395","12":"0.09392642"},{"1":"1um","2":"3L","3":"9","4":"175.00000","5":"20.726071","6":"31191.151","7":"2294.3771","8":"1.587802e-06","9":"1.621381e-07","10":"0.11843469","11":"0.07355859","12":"0.10211482"},{"1":"5um","2":"1L","3":"7","4":"39.94286","5":"6.084641","6":"5908.109","7":"879.4452","8":"1.316453e-06","9":"1.481148e-07","10":"0.15233365","11":"0.14885393","12":"0.11251049"},{"1":"5um","2":"3L","3":"9","4":"126.53333","5":"11.588356","6":"30385.138","7":"1540.0631","8":"2.136779e-06","9":"2.133016e-07","10":"0.09158343","11":"0.05068475","12":"0.09982387"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>Ok so this is super interesting. In Panel A, we see that total DNA is higher in 1 um pore size over 5 um pore size (we saw that above also). We also see that the 3x increase in volume filtered results in more than 3x total DNA. This might be the same mechanistic explanation as the pore size. Over 3L of filtration, the effective pore size of each filter (1 or 5 um) is reduced as stuff accumulates on the filter. If smaller pore size filters collect more stuff, then we would expect as more volume is fitlered and the effective pore size decreases, we get more than a linear increase in stuff collected. And as a sanity check, the jump from 1L to 3L in the 1 um pore size is larger than the jump from 1L to 3L in the 5 um pore size filtering.</p>
+<p>We can see that in the means of total DNA:</p>
+<ul>
+<li><p>1 um / 1L: 51.4 ng/uL</p></li>
+<li><p>1 um / 3L: 175 ng/uL (113% of expected 154.2 ng/ul if 3x)</p></li>
+<li><p>5 um / 1L: 39.9 ng/uL</p></li>
+<li><p>5 um / 3L: 126.5 ng/uL (106% of expected 119.7 ng/ul if 3x)</p></li>
+</ul>
+<p>Moving to Panel B, target DNA (not total DNA) is even more interesting!! For 1 L, the mean target DNA was slightly higher in the 1 um pore size vs.&nbsp;the 5 um pore size (7172 vs.&nbsp;5908 copies/ul - or 120%). But, when you go up to the 3 L samples, the mean target DNA in the 1 um pore size vs.&nbsp;the 5 um pore size is nearly identical (31,000 vs.&nbsp;30,000 - or about 102%). So, when looking at target DNA rather than total DNA, the pore size matters more when you are filtering less water but less once you are filtering more water.</p>
+<p>We can also see if there is a 3x increase in target DNA concentration within a pore size when you filter 3x the water volume.</p>
+<ul>
+<li><p>1 um / 1L: 7,172 copies/uL</p></li>
+<li><p>1 um / 3L: 31,191 copies/uL (145% of expected 21516 copies/ul if 3x)</p></li>
+<li><p>5 um / 1L: 5,908 copies/uL</p></li>
+<li><p>5 um / 3L: 30,385 ng/uL (171% of expected 17,724 copies/ul if 3x)</p></li>
+</ul>
+<p>So basically, you get way more bang for your buck. Or in other words, over a larger volume filtered, you get more than a linear increase in target DNA. We also got more than a linear increase in total DNA, but the effect was larger for target DNA relative to total DNA.</p>
+<p>Finally, that leads us to Panel C, where we look at the ratio of target DNA to total DNA within each pore size / volume filtered. First, we have to convert our target DNA from copies/uL to ng/uL, knowing that the fragment we amplified is 86 bp long. Then we can say how much of the total DNA is target DNA. We expect this number to be very small always because there is a lot of junk in the total DNA - bacteria, other animal DNA, all kinds of stuff. But this is our best measurement of the needle:haystack. If we filter more water, we expect more needles but we also expect a bigger haystack. The question is if those balance each other out or not. And if pore size changes that ratio.</p>
+<p>And huzzah! For all treatments, the ratio of target DNA to total DNA is on the order of 0.000001%! We did expect this to be small. But we also see a very clear pattern where the 1L sample mean ratios were smaller than the 3L sample mean ratios and the 1 um pore size mean ratios were smaller than the 5 um pore size ratios – with the best ratio being the 5 um filter with 3L filtered (173% of the 1 um 1L sample).</p>
+<p><strong>This confirms that we picked the right protocol: 3L on a 5 um pore size. (Which is also great because the 5 um filters much faster than the 1 um).</strong></p>
+<p>All of this testing was done with one preservation (Longmires) and extraction (phenol chloroform). The next thing to look at is how preservation/extraction impact yield – now holding pore size and volume constant.</p>
+</section>
+</section>
+<section id="preservation-and-extraction-testing" class="level2">
+<h2 class="anchored" data-anchor-id="preservation-and-extraction-testing">Preservation and extraction testing</h2>
+<p>Getting data from the MURI google drive. Downloaded (on 10/24/23) from this google doc (https://docs.google.com/spreadsheets/d/1p8M0_PJOpVJpVYAjRic67Ak7A2-T42tB0i7HOFwxdME/edit#gid=1442692080) but only certain tabs.</p>
+<p>The preservation and extraction matrix was the tab “06_matrix_Mar2023”.</p>
+<p>Notes:</p>
+<ul>
+<li><p>THESE WERE NOT HOMOGENIZED. They are all true biological replicates (bottles, essentially).</p></li>
+<li><p>All were collected via Smith Root Citizen Science Sampler.</p></li>
+<li><p>All were 3 L samples filtered onto 5 um filtered.</p></li>
+<li><p>See the time of collection in spreadseet - they were randomized for treatment to try to spread out from 1st to nth sample in case there was a change in concentration over time.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>p_e_raw <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>,<span class="st">"MURI_Module1_datasheets - 06_matrix_Mar2023.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="inhibition" class="level3">
+<h3 class="anchored" data-anchor-id="inhibition">Inhibition</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>p_e_inhib <span class="ot">&lt;-</span> p_e_raw <span class="sc">%&gt;%</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(filter_v_liq <span class="sc">==</span> <span class="st">"filter"</span>) <span class="sc">%&gt;%</span> <span class="co"># only keep samples used filter </span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">quantity=</span><span class="fu">as.numeric</span>(quantity)) <span class="sc">%&gt;%</span> </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">quantity2=</span>dilution<span class="sc">*</span>quantity) <span class="sc">%&gt;%</span> </span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_DNA=</span><span class="fu">as.numeric</span>(total_DNA)) <span class="sc">%&gt;%</span> </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">inhibition_value=</span><span class="fu">as.numeric</span>(inhibition_value))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There was 1 warning in `mutate()`.
+ℹ In argument: `total_DNA = as.numeric(total_DNA)`.
+Caused by warning:
+! NAs introduced by coercion</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There was 1 warning in `mutate()`.
+ℹ In argument: `inhibition_value = as.numeric(inhibition_value)`.
+Caused by warning:
+! NAs introduced by coercion</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(p_e_inhib, <span class="fu">aes</span>(<span class="at">x=</span>total_DNA, <span class="at">y=</span>inhibition_value, <span class="at">color=</span><span class="fu">factor</span>(dilution))) <span class="sc">+</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="sc">~</span>extraction <span class="sc">~</span>preservation) <span class="sc">+</span> </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 21 rows containing missing values (`geom_point()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="prelim_exploring_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Basically for the same sample, bio rep, and tech rep, if 1:1 and 1:10 both say not inhibited, does the quant give you the same target when you multiply the 1:10 by 10</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>p_e_not_inhib_simple <span class="ot">&lt;-</span> p_e_inhib <span class="sc">%&gt;%</span> </span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(inhibited <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(quantity2) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(sample, bio_rep, tech_rep, dilution, preservation, extraction, quantity, inhibition_value, quantity2)) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(sample_bio_tech, <span class="fu">c</span>(sample, bio_rep, tech_rep), <span class="at">remove=</span><span class="cn">FALSE</span>)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>keep_pairs <span class="ot">&lt;-</span> p_e_not_inhib_simple <span class="sc">%&gt;%</span> </span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sample, bio_rep, tech_rep) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n=</span><span class="fu">n</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n<span class="sc">==</span><span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(sample_bio_tech, <span class="fu">c</span>(sample, bio_rep, tech_rep))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'sample', 'bio_rep'. You can override using
+the `.groups` argument.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> p_e_not_inhib_simple <span class="sc">%&gt;%</span> </span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(sample_bio_tech <span class="sc">%in%</span> keep_pairs<span class="sc">$</span>sample_bio_tech) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(sample_bio_tech, dilution, quantity2)) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> dilution, <span class="at">values_from=</span>quantity2) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">d1=</span><span class="st">"1"</span>,<span class="at">d10=</span><span class="st">"10"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">diffquant =</span> d10<span class="sc">-</span>d1) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">diffquant_percent =</span> diffquant<span class="sc">/</span>d10<span class="sc">*</span><span class="dv">100</span>)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(p_e_not_inhib, aes(x=extraction, y=quantity2, color=factor(dilution))) +</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_point() + </span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="co">#   facet_grid(~preservation) + </span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme_bw()</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(t, aes(x=log10(d1), y=log10(d10))) +</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_point() + </span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="co">#   labs(x="Quantification of 1:1 (Log10)", y="Quantification of 1:10 (Log10)") +</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_abline(slope=1, intercept=0) +</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme_bw()</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>t2 <span class="ot">&lt;-</span> t <span class="sc">%&gt;%</span> </span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(p_e_not_inhib_simple, <span class="at">by =</span> <span class="st">"sample_bio_tech"</span>)</span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(t2, <span class="fu">aes</span>(<span class="at">x=</span>d10, <span class="at">y=</span>diffquant_percent, <span class="at">shape=</span>preservation, <span class="at">color=</span>extraction)) <span class="sc">+</span></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Quantification of 1:10 (more likely true)"</span>, <span class="at">y=</span><span class="st">"Percent difference </span><span class="sc">\n</span><span class="st"> [1:10 quant - 1:1 quant]/[1:10 quant] * 100"</span>) <span class="sc">+</span> </span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="prelim_exploring_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(t2, <span class="fu">aes</span>(<span class="at">x=</span><span class="fu">log10</span>(d1), <span class="at">y=</span><span class="fu">log10</span>(d10), <span class="at">color=</span>extraction, <span class="at">shape=</span>preservation)) <span class="sc">+</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Quantification of 1:1 (Log10)"</span>, <span class="at">y=</span><span class="st">"Quantification of 1:10 (Log10)"</span>) <span class="sc">+</span> </span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope=</span><span class="dv">1</span>, <span class="at">intercept=</span><span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="prelim_exploring_files/figure-html/unnamed-chunk-5-3.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>t3 <span class="ot">&lt;-</span> t2 <span class="sc">%&gt;%</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">d10_d1 =</span> d10<span class="sc">/</span>d1)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(t3, <span class="fu">aes</span>(<span class="at">x=</span><span class="fu">log10</span>(d10_d1), <span class="at">y=</span>inhibition_value, <span class="at">color=</span>extraction, <span class="at">shape=</span>preservation)) <span class="sc">+</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"1:10 quant / 1:1 quant"</span>, <span class="at">y=</span><span class="st">"Inhibition Value"</span>) <span class="sc">+</span> </span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="prelim_exploring_files/figure-html/unnamed-chunk-5-4.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="total-and-target-dna" class="level3">
+<h3 class="anchored" data-anchor-id="total-and-target-dna">Total and target DNA</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>p_e <span class="ot">&lt;-</span> p_e_raw <span class="sc">%&gt;%</span> </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(filter_v_liq <span class="sc">==</span> <span class="st">"filter"</span>) <span class="sc">%&gt;%</span> <span class="co"># only keep samples used filter </span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(inhibited<span class="sc">==</span><span class="dv">0</span>) <span class="sc">%&gt;%</span> <span class="co"># for now, only keep things not inhibited </span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">quantity=</span><span class="fu">as.numeric</span>(quantity)) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">quantity2=</span>dilution<span class="sc">*</span>quantity) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_DNA=</span><span class="fu">as.numeric</span>(total_DNA)) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ratio_tt_total =</span> ((quantity2<span class="sc">/</span><span class="fl">1.132e+10</span>)<span class="sc">/</span>total_DNA)<span class="sc">*</span><span class="dv">100</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(dilution<span class="sc">==</span><span class="dv">10</span>) <span class="co"># for now, just use 1:10 dilutions so we don't double count </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There was 1 warning in `mutate()`.
+ℹ In argument: `total_DNA = as.numeric(total_DNA)`.
+Caused by warning:
+! NAs introduced by coercion</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(p_e, <span class="fu">aes</span>(<span class="at">x=</span>total_DNA, <span class="at">y=</span><span class="fu">log10</span>(quantity2), <span class="at">color=</span>preservation)) <span class="sc">+</span> </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>extraction) <span class="sc">+</span> </span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 9 rows containing missing values (`geom_point()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="prelim_exploring_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(p_e, <span class="fu">aes</span>(<span class="at">x=</span>extraction, <span class="at">y=</span>ratio_tt_total, <span class="at">color=</span>extraction)) <span class="sc">+</span> </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>preservation) <span class="sc">+</span> </span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Ratio of T. t to total DNA (%)"</span>, <span class="at">x =</span> <span class="st">"Extraction Method"</span>, <span class="at">title =</span> <span class="st">"Linear Scale"</span>, <span class="at">fill=</span><span class="st">"Preservation Method"</span>)  <span class="sc">+</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">fill=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 9 rows containing missing values (`geom_point()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="prelim_exploring_files/figure-html/unnamed-chunk-6-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(p_e, <span class="fu">aes</span>(<span class="at">x=</span>extraction, <span class="at">y=</span><span class="fu">log10</span>(ratio_tt_total), <span class="at">fill=</span>preservation)) <span class="sc">+</span> </span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Log10 Ratio of T. t to total DNA (%)"</span>, <span class="at">x =</span> <span class="st">"Extraction Method"</span>, <span class="at">title =</span> <span class="st">"Log10 Scale"</span>, <span class="at">fill=</span><span class="st">"Preservation Method"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 9 rows containing non-finite values (`stat_boxplot()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="prelim_exploring_files/figure-html/unnamed-chunk-6-3.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # put plots next to each other </span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="co"># plot_grid(p_e_ratio_box_linear, p_e_ratio_box_log,</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co">#           labels = c("A", "B"),</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co">#           ncol = 2, nrow = 1, rel_widths = c(1,1.25))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can look at a similar metric where we look at the ratio of target DNA to total DNA but with different preservation and extraction methods. The thing to keep in mind here is that the water was not homogenized. So we are also seeing a lot of true biological variability between samples.</p>
+</section>
+</section>
+<section id="biological-variability" class="level2">
+<h2 class="anchored" data-anchor-id="biological-variability">Biological Variability</h2>
+<p>What can we say about true biological variability with all these samples?</p>
+<section id="true-biological-replicates-extractionpreservation-matrix" class="level3">
+<h3 class="anchored" data-anchor-id="true-biological-replicates-extractionpreservation-matrix">True biological replicates (extraction/preservation matrix)</h3>
+<p>Let’s focus on the non-homogenized ones first, within a single extraction/preservation. And then we can see if we want to expand from there.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>bio_var <span class="ot">&lt;-</span> p_e_raw <span class="sc">%&gt;%</span> </span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(filter_v_liq <span class="sc">==</span> <span class="st">"filter"</span>) <span class="sc">%&gt;%</span> <span class="co"># don't use any of the liquid </span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(smithroot_v_vaccum <span class="sc">==</span> <span class="st">"SR"</span>) <span class="sc">%&gt;%</span> <span class="co"># for now just use smith root.... </span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(inhibited<span class="sc">==</span><span class="dv">0</span>) <span class="sc">%&gt;%</span> <span class="co"># only keep not inhibited sample</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(dilution<span class="sc">==</span><span class="dv">10</span>) <span class="co"># keep only 1:10 dilutions (in case 1:1 and 1:10 were both not inhibited)</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bio_var, <span class="fu">aes</span>(<span class="at">x=</span>extraction, <span class="at">y=</span><span class="fu">log10</span>(quantity), <span class="at">fill=</span>preservation)) <span class="sc">+</span> </span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="prelim_exploring_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>bio_var_stats <span class="ot">&lt;-</span> bio_var <span class="sc">%&gt;%</span> </span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(extraction,preservation) <span class="sc">%&gt;%</span> </span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n=</span><span class="fu">n</span>(), <span class="at">meanconc =</span> <span class="fu">mean</span>(quantity), <span class="at">sdconc=</span><span class="fu">sd</span>(quantity)) <span class="sc">%&gt;%</span> </span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cv =</span> sdconc<span class="sc">/</span>meanconc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'extraction'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bio_var_stats, <span class="fu">aes</span>(<span class="at">x=</span>extraction, <span class="at">y=</span>cv, <span class="at">color=</span>preservation)) <span class="sc">+</span> </span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Extraction Method"</span>, <span class="at">y=</span><span class="st">"Coefficient of Variation"</span>, <span class="at">color=</span><span class="st">"Preservation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="prelim_exploring_files/figure-html/unnamed-chunk-7-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bio_var_stats, <span class="fu">aes</span>(<span class="at">x=</span>extraction, <span class="at">y=</span>meanconc, <span class="at">color=</span>preservation)) <span class="sc">+</span> </span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">position=</span><span class="fu">position_dodge</span>(<span class="fl">0.5</span>)) <span class="sc">+</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin=</span>meanconc<span class="sc">-</span>sdconc, <span class="at">ymax=</span>meanconc<span class="sc">+</span>sdconc), <span class="at">width=</span>.<span class="dv">2</span>,</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">position=</span><span class="fu">position_dodge</span>(<span class="fl">0.5</span>)) <span class="sc">+</span> </span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Extraction Method"</span>, <span class="at">y=</span><span class="st">"Mean Conc. (copies/uL)"</span>, <span class="at">color=</span><span class="st">"Preservation"</span>) <span class="sc">+</span> </span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">label=</span><span class="st">"n = 9 (3 bio x 3 tech reps each)"</span>, <span class="at">y=</span><span class="dv">2500</span>,<span class="at">x=</span><span class="fl">2.5</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="prelim_exploring_files/figure-html/unnamed-chunk-7-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Ok but these were not homogenized (good for actually assessing biological variability) - but there were 42 bottles that we collected and then randomized for the full matrix and they were collected sort of in series. We had 3 samplers so we had 3 in nearly parallel, but then in series so about 14 sets (42/3=14). If it took about 5 minutes per sample, this would be about an hour of sampling from the first set of 3 samples to the last set of 3 samples. We didn’t record every single sample time, but we recorded every few samples and can linearly interpolate here. It won’t be perfect but it will give us a sense if there was a pattern with time in variability.</p>
+<p>Meg made me the very informative “Sheet35” on the same main google spreadsheet (https://docs.google.com/spreadsheets/d/1bt43FWhgidfTIC1gWpQioI00oi72SFMIWQ4fICito3o/edit#gid=452158764), which I downloaded on 11/1/23 and import here.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>p_e_times <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>,<span class="st">"MURI_Module1_qPCR_metadata - Sheet35.csv"</span>))</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>pe_times <span class="ot">&lt;-</span> p_e_times <span class="sc">%&gt;%</span> </span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(lab_ID, reference, time_collected, onsite_or_offsite, time_filtered, field_notes, field_ID)) <span class="sc">%&gt;%</span> </span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">sample=</span>lab_ID)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>bio_var <span class="ot">&lt;-</span> bio_var <span class="sc">%&gt;%</span> </span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(pe_times, <span class="at">by=</span><span class="st">"sample"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">field_ID =</span> <span class="fu">as.numeric</span>(field_ID))</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bio_var, <span class="fu">aes</span>(<span class="at">x=</span>field_ID, <span class="at">y=</span><span class="fu">log10</span>(quantity), <span class="at">shape=</span>extraction, <span class="at">color=</span>preservation)) <span class="sc">+</span> </span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">#facet_wrap(~extraction) +</span></span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Field Collection Order"</span>, <span class="at">y=</span><span class="st">"Log10 Concentration (copies/uL)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="prelim_exploring_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="homogenized-biological-replicates-pore-size-volume-filtered" class="level3">
+<h3 class="anchored" data-anchor-id="homogenized-biological-replicates-pore-size-volume-filtered">Homogenized biological replicates (pore size / volume filtered)</h3>
+<p>Let’s compare this to the bottle to bottle variability in the first study - which may have been in the open pen rather than the pool…</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>vps_biovar <span class="ot">&lt;-</span> v_ps_raw <span class="sc">%&gt;%</span> </span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(task <span class="sc">==</span> <span class="st">"filter_vol"</span>) <span class="sc">%&gt;%</span> <span class="co"># only keep samples used for the pore size x volume comparison </span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(extraction <span class="sc">==</span> <span class="st">"PC"</span>) <span class="sc">%&gt;%</span> <span class="co"># we collected a few via Smith Root and extracted with Qiagen, remove</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(lab_ID, rep) <span class="sc">%&gt;%</span> </span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(dilution_factor)</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(vps_biovar, <span class="fu">aes</span>(<span class="at">x=</span>filter_size, <span class="at">y=</span>Tt_total_conc, <span class="at">fill=</span>vol_filtered)) <span class="sc">+</span> </span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> </span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="prelim_exploring_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(vps_biovar, <span class="fu">aes</span>(<span class="at">x=</span>filter_size, <span class="at">y=</span><span class="fu">log10</span>(Tt_total_conc), <span class="at">fill=</span>vol_filtered)) <span class="sc">+</span> </span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> </span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="prelim_exploring_files/figure-html/unnamed-chunk-9-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>This could be a black hole but let’s just try linear model really quickly…</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>testlm <span class="ot">&lt;-</span> <span class="fu">glm</span>(inhibition_value <span class="sc">~</span> preservation <span class="sc">+</span> extraction,</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> p_e_not_inhib_simple)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>v_ps_lm <span class="ot">&lt;-</span> v_ps_tt <span class="sc">%&gt;%</span> </span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">vol1 =</span> <span class="fu">str_extract</span>(vol_filtered, <span class="st">"[0-9]+"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ps1 =</span> <span class="fu">str_extract</span>(filter_size, <span class="st">"[0-9]+"</span>)) </span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(inhibition_value <span class="sc">~</span> vol1 <span class="sc">+</span> ps1 , </span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> v_ps_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = inhibition_value ~ vol1 + ps1, data = v_ps_lm)
+
+Coefficients:
+(Intercept)        vol13         ps15  
+    0.37659     -0.10973     -0.02549  </code></pre>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -1,0 +1,407 @@
+---
+title: "prelim_outline"
+format: html
+editor: visual
+---
+
+## Overview
+
+We want to wrangle existing data in hand on methods comparison we have already done and then fill in gaps. Going to start by figuring out what samples we have and what we know about them and then we can fill analyses and formalize things. So basically this is exploratory and setting up for bigger picture.
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(here)
+library(cowplot)
+```
+
+## Volume filtered and pore size test
+
+Getting data from the MURI google drive. Downloaded (on 10/24/23) from this google doc (https://docs.google.com/spreadsheets/d/1p8M0_PJOpVJpVYAjRic67Ak7A2-T42tB0i7HOFwxdME/edit#gid=1442692080) but only certain tabs.
+
+Volume filtered and pore size test was the tab labeled "01_bangor_fielddeployment1_Sept2022".
+
+We then will only take the ones that are flagged as the task of "filter_vol".
+
+Notes:
+
+-   A gigantic volume of water was collected and homogenized back at NOAA to try to reduce any true biological variability and really answer the question of volume / pore size filter.
+
+-   All were vacuum filtered back at the lab after \~2ish hours of transit?
+
+-   All were filtered on the same type of filter (MCE I think?)
+
+-   All filters were then stored in Longmires and then extracted via PC.
+
+### Total DNA vs. Inhibition
+
+Start by looking at inhibition levels as measured by IPC... nothing amplified at 1:1 dilution, and then samples were all diluted 1:10, and then further if still inhibited. We can use the "inhibition value" which is the difference in Ct between the IPC/NTC and the IPC/sample as an indication of how inhibited each sample is. A higher inhibition value means more inhibitors in the sample.
+
+We would expect that: - larger volumes of water should have more total DNA, but also more inhibitors (we are essentially concentrating the inhibitors in the sample) - the smaller pore size filter might have more inhibition given the same volume filtered
+
+Later, we will look at the actual target concentration. Because more volume filtered should get us more target, but also more inhibitors. There may be a "sweet spot" of maximizing concentrating target but not so many inhibitors that our target is swamped out - or we have to dilute so much for the inhibitors that we dilute out our target.
+
+```{r}
+v_ps_raw <- read.csv(here("data","MURI_Module1_datasheets - 01_bangor_fielddeployment1_Sept2022.csv"))
+
+v_ps <- v_ps_raw %>% 
+  filter(task == "filter_vol") %>% # only keep samples used for the pore size x volume comparison 
+  filter(extraction == "PC") %>% # we collected a few via Smith Root and extracted with Qiagen, remove
+  select(c(lab_ID, rep, filter_size, vol_filtered, dilution_factor, DNA_20_conc, DNA_total_conc, Tt_Ct, 
+           Tt_conc, Tt_total_conc, IPC_CT, IPC_meanNTC, IPC_meanNTC_SD, inhibition_value, inhibited, use))
+
+## NOTE: go back to raw later and get stats for efficiency, LOD, etc. for all runs
+
+# fill in total DNA for all samples 
+v_ps_qubit <- v_ps %>% 
+  select(c(lab_ID, DNA_total_conc)) %>% 
+  drop_na(DNA_total_conc) %>% 
+  distinct() # there are multiple per row because of multiple dilutions - just need one per sample here 
+
+v_ps2 <- v_ps %>% 
+  left_join(v_ps_qubit %>% rename(total_DNA=DNA_total_conc), by= "lab_ID") %>% 
+  select(c(lab_ID, total_DNA, inhibition_value, dilution_factor, filter_size, vol_filtered)) %>% 
+  mutate(inhibition_value = as.numeric(inhibition_value)) %>% 
+  mutate(total_DNA = as.numeric(total_DNA))
+
+ggplot(v_ps2, aes(x=total_DNA, y=inhibition_value, 
+                 shape = vol_filtered, color = filter_size)) + 
+  geom_point() + 
+  facet_wrap(~dilution_factor) +
+  theme_bw() + 
+  geom_hline(yintercept=0.5) + 
+  labs(x="Total DNA Concentration (ng/uL)", y= "Inhibition Value", shape ="Volume Filtered (L)", color = "Filter Pore Size (um)")
+
+```
+
+Ok - so we know that filtering 3x the volume does in fact get you much more total DNA (as expected). We also can clearly see that 1 um filters accumulate more total DNA than 5 um filters.
+
+It looks like in terms of inhibition, we don't have to dilute 1 L samples as much as we need to dilute 3 L samples (of course) and maybe there is a small effect of pore size but not much.
+
+Basically, we proved the general rule of thumb that you really should only be putting in 1-5 ng of total DNA into a PCR reaction. Because if you look along the x-axis and see where things start to be not inhibited anymore and divide the total DNA by the dilution factor (facet), basically your sample is no longer inhibited when you are down in that 1-5 ng of total DNA range (here, we added 2 ul of template to a 10 ul reaction).
+
+But what about target DNA? Is more total DNA going to result in more target DNA? Or because we really can only put 1-5 ng into a PCR, do we just dilute the larger volume samples to give us the same target DNA? And what about pore size of filter?
+
+### Total DNA vs. Target DNA
+
+Now, let's only look at samples that are no longer inhibited (after dilution) and start looking at total vs. target DNA.
+
+```{r}
+
+v_ps_tt <- v_ps %>% 
+  filter(use == 1) %>% # only use the non-inhibited samples for actual quants of t tursiops 
+  filter(inhibited == 0) # looks like a few inhibited slipped through so get rid of those guys for now 
+  
+v_ps_total_box <- ggplot(v_ps_tt, aes(x=vol_filtered, y=DNA_total_conc, fill=filter_size)) + 
+  geom_boxplot() + 
+  labs(y="Total Genomic DNA (ng/uL)", x = "Volume Filtered (L)", title="Total DNA") + 
+  theme_bw() + 
+  guides(fill=FALSE)
+
+v_ps_tt_box <- ggplot(v_ps_tt, aes(x=vol_filtered, y=Tt_total_conc, fill=filter_size)) + 
+  geom_boxplot() + 
+  theme_bw() + 
+  labs(y="T. tursiops DNA (copies/uL)", x = "Volume Filtered (L)", title = "Target DNA", fill="Filter Pore Size (um)") + 
+  guides(fill=FALSE)
+
+## NOW RATIO!!! 
+v_ps_tt <- v_ps_tt %>% 
+  mutate(ratio_tt_total = ((Tt_total_conc/1.132e+10)/DNA_total_conc)*100) 
+
+## target is 86 bp - use NEB https://nebiocalculator.neb.com/#!/dsdnaamt
+## 1.132e+10 copies of target = 1 ng of target 
+
+v_ps_ratio_box <- ggplot(v_ps_tt, aes(x=vol_filtered, y=ratio_tt_total, fill=filter_size)) + 
+  geom_boxplot() + 
+  theme_bw() + 
+  labs(y="Ratio of T. t to total DNA (%)", x = "Volume Filtered (L)", title = "Target:Total", fill="Pore Size (um)")
+
+# put plots next to each other 
+plot_grid(v_ps_total_box, v_ps_tt_box,v_ps_ratio_box, 
+          labels = c("A", "B", "C"),
+          ncol = 3, nrow = 1, rel_widths = c(1,1,2))
+
+# some summary statistics of the box plots 
+v_ps_tt_summary <- v_ps_tt %>% 
+  group_by(filter_size, vol_filtered) %>% 
+  summarize(n=n(),
+            mean_total_DNA = mean(DNA_total_conc), sd_total_DNA = sd(DNA_total_conc), 
+            mean_tt_DNA = mean(Tt_total_conc), sd_tt_DNA = sd(Tt_total_conc),
+            mean_ratio = mean(ratio_tt_total), sd_ratio = sd(ratio_tt_total)) %>% 
+  mutate(total_cv = sd_total_DNA/mean_total_DNA) %>% 
+  mutate(tt_cv = sd_tt_DNA/mean_tt_DNA) %>% 
+  mutate(ratio_cv = sd_ratio/mean_ratio)
+
+rmarkdown::paged_table(v_ps_tt_summary)
+```
+
+Ok so this is super interesting. In Panel A, we see that total DNA is higher in 1 um pore size over 5 um pore size (we saw that above also). We also see that the 3x increase in volume filtered results in more than 3x total DNA. This might be the same mechanistic explanation as the pore size. Over 3L of filtration, the effective pore size of each filter (1 or 5 um) is reduced as stuff accumulates on the filter. If smaller pore size filters collect more stuff, then we would expect as more volume is fitlered and the effective pore size decreases, we get more than a linear increase in stuff collected. And as a sanity check, the jump from 1L to 3L in the 1 um pore size is larger than the jump from 1L to 3L in the 5 um pore size filtering.
+
+We can see that in the means of total DNA:
+
+-   1 um / 1L: 51.4 ng/uL
+
+-   1 um / 3L: 175 ng/uL (113% of expected 154.2 ng/ul if 3x)
+
+-   5 um / 1L: 39.9 ng/uL
+
+-   5 um / 3L: 126.5 ng/uL (106% of expected 119.7 ng/ul if 3x)
+
+Moving to Panel B, target DNA (not total DNA) is even more interesting!! For 1 L, the mean target DNA was slightly higher in the 1 um pore size vs. the 5 um pore size (7172 vs. 5908 copies/ul - or 120%). But, when you go up to the 3 L samples, the mean target DNA in the 1 um pore size vs. the 5 um pore size is nearly identical (31,000 vs. 30,000 - or about 102%). So, when looking at target DNA rather than total DNA, the pore size matters more when you are filtering less water but less once you are filtering more water.
+
+We can also see if there is a 3x increase in target DNA concentration within a pore size when you filter 3x the water volume.
+
+-   1 um / 1L: 7,172 copies/uL
+
+-   1 um / 3L: 31,191 copies/uL (145% of expected 21516 copies/ul if 3x)
+
+-   5 um / 1L: 5,908 copies/uL
+
+-   5 um / 3L: 30,385 ng/uL (171% of expected 17,724 copies/ul if 3x)
+
+So basically, you get way more bang for your buck. Or in other words, over a larger volume filtered, you get more than a linear increase in target DNA. We also got more than a linear increase in total DNA, but the effect was larger for target DNA relative to total DNA.
+
+Finally, that leads us to Panel C, where we look at the ratio of target DNA to total DNA within each pore size / volume filtered. First, we have to convert our target DNA from copies/uL to ng/uL, knowing that the fragment we amplified is 86 bp long. Then we can say how much of the total DNA is target DNA. We expect this number to be very small always because there is a lot of junk in the total DNA - bacteria, other animal DNA, all kinds of stuff. But this is our best measurement of the needle:haystack. If we filter more water, we expect more needles but we also expect a bigger haystack. The question is if those balance each other out or not. And if pore size changes that ratio.
+
+And huzzah! For all treatments, the ratio of target DNA to total DNA is on the order of 0.000001%! We did expect this to be small. But we also see a very clear pattern where the 1L sample mean ratios were smaller than the 3L sample mean ratios and the 1 um pore size mean ratios were smaller than the 5 um pore size ratios -- with the best ratio being the 5 um filter with 3L filtered (173% of the 1 um 1L sample).
+
+**This confirms that we picked the right protocol: 3L on a 5 um pore size. (Which is also great because the 5 um filters much faster than the 1 um).**
+
+All of this testing was done with one preservation (Longmires) and extraction (phenol chloroform). The next thing to look at is how preservation/extraction impact yield -- now holding pore size and volume constant.
+
+## Preservation and extraction testing
+
+Getting data from the MURI google drive. Downloaded (on 10/24/23) from this google doc (https://docs.google.com/spreadsheets/d/1p8M0_PJOpVJpVYAjRic67Ak7A2-T42tB0i7HOFwxdME/edit#gid=1442692080) but only certain tabs.
+
+The preservation and extraction matrix was the tab "06_matrix_Mar2023".
+
+Notes:
+
+-   THESE WERE NOT HOMOGENIZED. They are all true biological replicates (bottles, essentially).
+
+-   All were collected via Smith Root Citizen Science Sampler.
+
+-   All were 3 L samples filtered onto 5 um filtered.
+
+-   See the time of collection in spreadseet - they were randomized for treatment to try to spread out from 1st to nth sample in case there was a change in concentration over time.
+
+```{r}
+
+p_e_raw <- read.csv(here("data","MURI_Module1_datasheets - 06_matrix_Mar2023.csv"))
+
+```
+
+### Inhibition
+
+```{r}
+p_e_inhib <- p_e_raw %>% 
+  filter(filter_v_liq == "filter") %>% # only keep samples used filter 
+  mutate(quantity=as.numeric(quantity)) %>% 
+  mutate(quantity2=dilution*quantity) %>% 
+  mutate(total_DNA=as.numeric(total_DNA)) %>% 
+  mutate(inhibition_value=as.numeric(inhibition_value))
+
+ggplot(p_e_inhib, aes(x=total_DNA, y=inhibition_value, color=factor(dilution))) +
+  geom_point() + 
+  geom_hline(yintercept=0.5) + 
+  facet_grid(~extraction ~preservation) + 
+  theme_bw()
+
+# Basically for the same sample, bio rep, and tech rep, if 1:1 and 1:10 both say not inhibited, does the quant give you the same target when you multiply the 1:10 by 10
+
+p_e_not_inhib_simple <- p_e_inhib %>% 
+  filter(inhibited == 0) %>% 
+  drop_na(quantity2) %>% 
+  select(c(sample, bio_rep, tech_rep, dilution, preservation, extraction, quantity, inhibition_value, quantity2)) %>% 
+  unite(sample_bio_tech, c(sample, bio_rep, tech_rep), remove=FALSE)
+
+keep_pairs <- p_e_not_inhib_simple %>% 
+  group_by(sample, bio_rep, tech_rep) %>% 
+  summarize(n=n()) %>% 
+  filter(n==2) %>% 
+  unite(sample_bio_tech, c(sample, bio_rep, tech_rep))
+
+t <- p_e_not_inhib_simple %>% 
+  filter(sample_bio_tech %in% keep_pairs$sample_bio_tech) %>% 
+  select(c(sample_bio_tech, dilution, quantity2)) %>% 
+  pivot_wider(names_from = dilution, values_from=quantity2) %>% 
+  rename(d1="1",d10="10") %>% 
+  mutate(diffquant = d10-d1) %>% 
+  mutate(diffquant_percent = diffquant/d10*100)
+  
+# ggplot(p_e_not_inhib, aes(x=extraction, y=quantity2, color=factor(dilution))) +
+#   geom_point() + 
+#   facet_grid(~preservation) + 
+#   theme_bw()
+
+# ggplot(t, aes(x=log10(d1), y=log10(d10))) +
+#   geom_point() + 
+#   labs(x="Quantification of 1:1 (Log10)", y="Quantification of 1:10 (Log10)") +
+#   geom_abline(slope=1, intercept=0) +
+#   theme_bw()
+  
+
+t2 <- t %>% 
+  left_join(p_e_not_inhib_simple, by = "sample_bio_tech")
+
+ggplot(t2, aes(x=d10, y=diffquant_percent, shape=preservation, color=extraction)) +
+  geom_point(size=3) + 
+  labs(x="Quantification of 1:10 (more likely true)", y="Percent difference \n [1:10 quant - 1:1 quant]/[1:10 quant] * 100") + 
+  theme_bw()
+
+ggplot(t2, aes(x=log10(d1), y=log10(d10), color=extraction, shape=preservation)) +
+  geom_point() + 
+  labs(x="Quantification of 1:1 (Log10)", y="Quantification of 1:10 (Log10)") + 
+  geom_abline(slope=1, intercept=0) +
+  theme_bw()
+
+t3 <- t2 %>% 
+  mutate(d10_d1 = d10/d1)
+
+ggplot(t3, aes(x=log10(d10_d1), y=inhibition_value, color=extraction, shape=preservation)) +
+  geom_point() + 
+  labs(x="1:10 quant / 1:1 quant", y="Inhibition Value") + 
+  theme_bw()
+
+```
+
+### Total and target DNA
+
+```{r}
+p_e <- p_e_raw %>% 
+  filter(filter_v_liq == "filter") %>% # only keep samples used filter 
+  filter(inhibited==0) %>% # for now, only keep things not inhibited 
+  mutate(quantity=as.numeric(quantity)) %>% 
+  mutate(quantity2=dilution*quantity) %>% 
+  mutate(total_DNA=as.numeric(total_DNA)) %>% 
+  mutate(ratio_tt_total = ((quantity2/1.132e+10)/total_DNA)*100) %>% 
+  filter(dilution==10) # for now, just use 1:10 dilutions so we don't double count 
+
+ggplot(p_e, aes(x=total_DNA, y=log10(quantity2), color=preservation)) + 
+  geom_point() + 
+  facet_wrap(~extraction) + 
+  theme_bw()
+  
+ggplot(p_e, aes(x=extraction, y=ratio_tt_total, color=extraction)) + 
+  geom_point() + 
+  facet_wrap(~preservation) + 
+  theme_bw() + 
+  labs(y="Ratio of T. t to total DNA (%)", x = "Extraction Method", title = "Linear Scale", fill="Preservation Method")  +
+  guides(fill=FALSE)
+
+
+ggplot(p_e, aes(x=extraction, y=log10(ratio_tt_total), fill=preservation)) + 
+  geom_boxplot() + 
+  theme_bw() + 
+  labs(y="Log10 Ratio of T. t to total DNA (%)", x = "Extraction Method", title = "Log10 Scale", fill="Preservation Method") 
+
+# # put plots next to each other 
+# plot_grid(p_e_ratio_box_linear, p_e_ratio_box_log,
+#           labels = c("A", "B"),
+#           ncol = 2, nrow = 1, rel_widths = c(1,1.25))
+
+```
+
+We can look at a similar metric where we look at the ratio of target DNA to total DNA but with different preservation and extraction methods. The thing to keep in mind here is that the water was not homogenized. So we are also seeing a lot of true biological variability between samples.
+
+## Biological Variability
+
+What can we say about true biological variability with all these samples? 
+
+### True biological replicates (extraction/preservation matrix)
+
+Let's focus on the non-homogenized ones first, within a single extraction/preservation. And then we can see if we want to expand from there. 
+
+```{r}
+
+bio_var <- p_e_raw %>% 
+  filter(filter_v_liq == "filter") %>% # don't use any of the liquid 
+  filter(smithroot_v_vaccum == "SR") %>% # for now just use smith root.... 
+  filter(inhibited==0) %>% # only keep not inhibited sample
+  filter(dilution==10) # keep only 1:10 dilutions (in case 1:1 and 1:10 were both not inhibited)
+
+ggplot(bio_var, aes(x=extraction, y=log10(quantity), fill=preservation)) + 
+  geom_boxplot() 
+
+bio_var_stats <- bio_var %>% 
+  group_by(extraction,preservation) %>% 
+  summarize(n=n(), meanconc = mean(quantity), sdconc=sd(quantity)) %>% 
+  mutate(cv = sdconc/meanconc)
+
+ggplot(bio_var_stats, aes(x=extraction, y=cv, color=preservation)) + 
+  geom_point() +
+  theme_bw() + 
+  labs(x="Extraction Method", y="Coefficient of Variation", color="Preservation")
+
+ggplot(bio_var_stats, aes(x=extraction, y=meanconc, color=preservation)) + 
+  geom_point(position=position_dodge(0.5)) +
+  geom_errorbar(aes(ymin=meanconc-sdconc, ymax=meanconc+sdconc), width=.2,
+                 position=position_dodge(0.5)) + 
+  theme_bw() + 
+  labs(x="Extraction Method", y="Mean Conc. (copies/uL)", color="Preservation") + 
+  annotate("text", label="n = 9 (3 bio x 3 tech reps each)", y=2500,x=2.5 )
+
+```
+
+Ok but these were not homogenized (good for actually assessing biological variability) - but there were 42 bottles that we collected and then randomized for the full matrix and they were collected sort of in series. We had 3 samplers so we had 3 in nearly parallel, but then in series so about 14 sets (42/3=14). If it took about 5 minutes per sample, this would be about an hour of sampling from the first set of 3 samples to the last set of 3 samples. We didn't record every single sample time, but we recorded every few samples and can linearly interpolate here. It won't be perfect but it will give us a sense if there was a pattern with time in variability. 
+
+Meg made me the very informative "Sheet35" on the same main google spreadsheet (https://docs.google.com/spreadsheets/d/1bt43FWhgidfTIC1gWpQioI00oi72SFMIWQ4fICito3o/edit#gid=452158764), which I downloaded on 11/1/23 and import here. 
+
+```{r}
+p_e_times <- read.csv(here("data","MURI_Module1_qPCR_metadata - Sheet35.csv"))
+
+pe_times <- p_e_times %>% 
+  select(c(lab_ID, reference, time_collected, onsite_or_offsite, time_filtered, field_notes, field_ID)) %>% 
+  rename(sample=lab_ID)
+
+bio_var <- bio_var %>% 
+  left_join(pe_times, by="sample") %>% 
+  mutate(field_ID = as.numeric(field_ID))
+
+ggplot(bio_var, aes(x=field_ID, y=log10(quantity), shape=extraction, color=preservation)) + 
+  geom_point() +
+  #facet_wrap(~extraction) +
+  theme_bw() + 
+  labs(x="Field Collection Order", y="Log10 Concentration (copies/uL)")
+  
+
+```
+
+### Homogenized biological replicates (pore size / volume filtered) 
+
+Let's compare this to the bottle to bottle variability in the first study - which may have been in the open pen rather than the pool... 
+
+```{r}
+
+vps_biovar <- v_ps_raw %>% 
+  filter(task == "filter_vol") %>% # only keep samples used for the pore size x volume comparison 
+  filter(extraction == "PC") %>% # we collected a few via Smith Root and extracted with Qiagen, remove
+  group_by(lab_ID, rep) %>% 
+  slice_max(dilution_factor)
+
+ggplot(vps_biovar, aes(x=filter_size, y=Tt_total_conc, fill=vol_filtered)) + 
+  geom_boxplot() + 
+  theme_bw() 
+
+ggplot(vps_biovar, aes(x=filter_size, y=log10(Tt_total_conc), fill=vol_filtered)) + 
+  geom_boxplot() + 
+  theme_bw() 
+
+```
+
+This could be a black hole but let's just try linear model really quickly... 
+
+```{r}
+
+testlm <- glm(inhibition_value ~ preservation + extraction,
+  data = p_e_not_inhib_simple)
+
+
+v_ps_lm <- v_ps_tt %>% 
+  mutate(vol1 = str_extract(vol_filtered, "[0-9]+")) %>% 
+  mutate(ps1 = str_extract(filter_size, "[0-9]+")) 
+  
+lm(inhibition_value ~ vol1 + ps1 , 
+    data = v_ps_lm)
+
+```
