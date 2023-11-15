@@ -57,6 +57,8 @@ All samples were preserved for X weeks (about a month?) before being extracted. 
 
 ### Inhibition testing and target DNA quantification
 
+* Meg to check - one set (either pore size/vol filtered or preservation/extraction had the 1:10 dilution run through clean up kit)
+
 All samples run in triplicate and were assessed for inhibition by using an internal positive control (IPC) assay that was multiplexed with the target DNA assay by utilizing two different reporters. The IPC assay used was TaqMan Exogenous Internal Positive Control Reagents (EXO-IPC) (Applied Biosystems, USA). The IPC was included in all environmental samples and also in no template controls (NTC). Samples were deemed inhibited if the difference in mean Ct value of the IPC measured in the sample and the mean Ct value of the IPC measured in the sample was greater than 0.5. Inhibited samples were diluted and re-run until the difference in Ct was less than 0.5.
 
 Target DNA (*T. tursiops*) was quantified using an assay targeting a 80 base pair fragment of the Cytochrome B gene (\* MEG CHECK; ALSO ASSAY NOT PUBLISHED) using a synthetic gBlock (IDT) as a standard curve from 100,000 copies/ul to 1 copy/ul in a ten-fold dilution series. The final recipe and cycling conditions for the assay are found in Supplemental Text 1.
