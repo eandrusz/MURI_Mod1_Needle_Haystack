@@ -1,34 +1,39 @@
 ---
 title: "Needle in Haystack, Sweet Spot, Listen to Megan"
 author:
-- Elizabeth Andruszkiewicz Allan,
-- Megan R. Shaffer,
-- Ryan P. Kelly,
-- Kim Parsons
-date: '2023'
-editor: visual
-output:
-  word_document: default
-  pdf_document:
+  -Elizabeth Andruszkiewicz Allan
+  -Megan R. Shaffer
+  -Ryan P. Kelly
+  -Kim Parsons
+format:
+  pdf:
     fig_caption: yes
     keep_tex: yes
     latex_engine: pdflatex
     number_sections: no
     extra_dependencies: float
-  html_document:
-    df_print: paged
-header-includes:
-- \usepackage{lineno}
-- \linenumbers
-- \usepackage{setspace}\doublespacing
-- \usepackage{gensymb}
 bibliography: references.bib
 csl: ecological-applications.csl
 ---
+\newpage 
 
 ## Abstract
 
+There are many choices that simply must be made when sampling for eDNA analysis, whether a targeted, single-species approach or a community-based, metabarcoding approach. Of the entire workflow from sampling water to bioinformatic analyses, it seems like the choices in molecular methods and downstream bioinformatics are the most important. However, the first steps in the process of collecting water, filtering it, and preserving it are also important and are often overlooked as major decision points. Many researchers use established methods with limited or no testing for their particular research question. Here, we investigate (1) the volume of water filtered and the filter pore size and (2) the preservation method and extraction method of samples with a specific lens on how inhibition and rarity of target interact with these choices to impact the detection of a single targeted assay (via qPCR and ddPCR) and community compositions (via metabarcoding). We find that XXX filtering larger volumes and maximizing total DNA yield during extraction is not always beneficial to detection likely due to the concentration of inhibitors and co-extraction of off-target template. We recommend collecting pilot samples to determine the minimum volume of water required given the rarity of the target and using an extraction method tailored to the taxa of interest. Finally, we note that inhibition is often masked in metabarcoding read proportions and recommend quantifying inhibition in environmental samples before metabarcoding to avoid missing rare taxa or misinterpreting proportions of target taxa. 
+
+The number of studies utilizing information from environmental DNA (eDNA) from water samples has and continues to increase at a steady rate. Whether looking for a specific species' DNA or looking for many species via metabarcoding, the first step of any project includes making many decisions about collecting samples. Namely, the volume of water to filter, filter pore size, preservation, and extraction methods all must be chosen before embarking on a project. Though previous work has investigated the impacts of these choices on target DNA capture, here we expand upon how these choices affect not only target DNA capture, but how they also impact inhibition and target:total DNA recovery. We compared two different filtration volumes (1 L vs. 3 L) and two pore size filters (1 um vs. 3 um) for the same preservation and extraction method. We then compared five preservation methods (RNALater, Longmire's buffer, -80C, Smith Root self preserving filters, and DNA/RNA Shield) and three extraction methods (phenol-chloroform-isoamyl, Qiagen Blood and Tissue, Zymo Mini Prep) while holding the volume filtered and pore size constant. We found that collecting more water on a larger filter pore size maximized target DNA and the target:total DNA ratio. We also found that concentrating larger volumes of water concentrates more inhibitors. 
+
+\newpage
+
 ## Introduction
+
+The first few steps to designing a sampling protocol for eDNA require researchers to make many decisions. These include things like: where should I take my sample, what depth should I sample at, how much volume should I filter, what pore size filter should I use, and many others. After water collection and filtration, 
+
+In an ideal world, sampling would minimize effort, minimize the concentration of inhibitors, maximize target DNA capture, and maximize the ratio of target:total DNA. 
+
+In reality, in order to maximize target DNA, the logical first step is to filter more water. Though this will increase target DNA, it will also increase both total DNA and inhibitors. With increased concentration of total DNA and inhibitors, the extraction and detection of target might be negatively impacted. For example, if a sample is more inhibited, it may require dilution or cleaning.  
+
+Therefore, more water might not always be better. 
 
 ## Methods
 
@@ -42,7 +47,7 @@ After DNA extraction, all extracts from both experiments followed the same proce
 
 Water samples were collected from Hood Canal near Bangor, Washington in September 2022 from a netted pen containing three Atlantic bottlenose dolphins (*Tursiops truncatus*) (\*CHECK WITH BANGOR). A total of X L of water was collected on site in X large, clean carboys. Water was transported from the sampling site to the NOAA Northwest Fisheries Science Center (NWFSC) (on ice?), which took approximately 3 hours (check!).
 
-At the lab, carboys were well mixed to homogenize the source water before splitting it into individual samples. Samples were assigned to a volume filtered treatment (1 L or 3 L) and a pore size treatment (1 um or 5 um), for a total of four treatments, each with three biological replicates (i.e., filters). All filters were 47 mm diameter mixed cellulose ester (MCE; \*add manufacturer) and water was filtered using a vacuum manifold and sterile, single use filter funnels. After filtration, filters were removed with sterile forceps and placed into 5 ml (check) tubes with 2 ml (check) of Longmire's buffer (cite longmires here) and stored at room temperature for 1 month (check) until DNA extraction. All filters were extracted using a protocol for phenol-chlorofom-isoamyl with a phase lock (see Ramon-Laca 2021 for detailed protocol - CITE https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0257773). Total DNA of all extracts were quantified via a Qubit fluorometer.
+At the lab, carboys were well mixed to homogenize the source water before splitting it into individual samples. Samples were assigned to a volume filtered treatment (1 L or 3 L) and a pore size treatment (1 um or 5 um), for a total of four treatments, each with three biological replicates (i.e., filters). All filters were 47 mm diameter mixed cellulose ester (MCE; \*add manufacturer) and water was filtered using a vacuum manifold and sterile, single use filter funnels. After filtration, filters were removed with sterile forceps and placed into 5 ml (check) tubes with 2 ml (check) of Longmire's buffer (cite longmires here) and stored at room temperature for 1 month (check) until DNA extraction. All filters were extracted using a protocol for phenol-chlorofom-isoamyl with a phase lock (see Ramon-Laca 2021 for detailed protocol [@ramón-laca2021]). Total DNA of all extracts were quantified via a Qubit fluorometer.
 
 #### Preservation and extraction comparison
 
@@ -73,3 +78,7 @@ The two sets of experiments used different source water,
 ### Total DNA, target DNA, target:total DNA ratios
 
 ## Discussion
+
+\newpage  
+
+## References

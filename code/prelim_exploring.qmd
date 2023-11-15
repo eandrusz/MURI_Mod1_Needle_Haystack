@@ -306,11 +306,11 @@ We can look at a similar metric where we look at the ratio of target DNA to tota
 
 ## Biological Variability
 
-What can we say about true biological variability with all these samples? 
+What can we say about true biological variability with all these samples?
 
 ### True biological replicates (extraction/preservation matrix)
 
-Let's focus on the non-homogenized ones first, within a single extraction/preservation. And then we can see if we want to expand from there. 
+Let's focus on the non-homogenized ones first, within a single extraction/preservation. And then we can see if we want to expand from there.
 
 ```{r}
 
@@ -343,9 +343,9 @@ ggplot(bio_var_stats, aes(x=extraction, y=meanconc, color=preservation)) +
 
 ```
 
-Ok but these were not homogenized (good for actually assessing biological variability) - but there were 42 bottles that we collected and then randomized for the full matrix and they were collected sort of in series. We had 3 samplers so we had 3 in nearly parallel, but then in series so about 14 sets (42/3=14). If it took about 5 minutes per sample, this would be about an hour of sampling from the first set of 3 samples to the last set of 3 samples. We didn't record every single sample time, but we recorded every few samples and can linearly interpolate here. It won't be perfect but it will give us a sense if there was a pattern with time in variability. 
+Ok but these were not homogenized (good for actually assessing biological variability) - but there were 42 bottles that we collected and then randomized for the full matrix and they were collected sort of in series. We had 3 samplers so we had 3 in nearly parallel, but then in series so about 14 sets (42/3=14). If it took about 5 minutes per sample, this would be about an hour of sampling from the first set of 3 samples to the last set of 3 samples. We didn't record every single sample time, but we recorded every few samples and can linearly interpolate here. It won't be perfect but it will give us a sense if there was a pattern with time in variability.
 
-Meg made me the very informative "Sheet35" on the same main google spreadsheet (https://docs.google.com/spreadsheets/d/1bt43FWhgidfTIC1gWpQioI00oi72SFMIWQ4fICito3o/edit#gid=452158764), which I downloaded on 11/1/23 and import here. 
+Meg made me the very informative "Sheet35" on the same main google spreadsheet (https://docs.google.com/spreadsheets/d/1bt43FWhgidfTIC1gWpQioI00oi72SFMIWQ4fICito3o/edit#gid=452158764), which I downloaded on 11/1/23 and import here.
 
 ```{r}
 p_e_times <- read.csv(here("data","MURI_Module1_qPCR_metadata - Sheet35.csv"))
@@ -367,9 +367,9 @@ ggplot(bio_var, aes(x=field_ID, y=log10(quantity), shape=extraction, color=prese
 
 ```
 
-### Homogenized biological replicates (pore size / volume filtered) 
+### Homogenized biological replicates (pore size / volume filtered)
 
-Let's compare this to the bottle to bottle variability in the first study - which may have been in the open pen rather than the pool... 
+Let's compare this to the bottle to bottle variability in the first study - which may have been in the open pen rather than the pool...
 
 ```{r}
 
@@ -389,7 +389,7 @@ ggplot(vps_biovar, aes(x=filter_size, y=log10(Tt_total_conc), fill=vol_filtered)
 
 ```
 
-This could be a black hole but let's just try linear model really quickly... 
+This could be a black hole but let's just try linear model really quickly...
 
 ```{r}
 
