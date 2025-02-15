@@ -32,7 +32,7 @@ $^2$ Conservation Biology Division, Northwest Fisheries Science Center, National
 
 $^{\dagger}$ Corresponding author: [eallan\@uw.edu](mailto:eallan@uw.edu){.email} \vspace{1em}
 
-For submission to: \textit{Environmental DNA} \newline Manuscript type: Original Article \newline Open Research Statement: Data are already published and publicly available, with those publications properly cited in this submission. The repository for code can be found at: \newline Andruszkiewicz Allan et al. 2025. <XX> \newline \textit{Keywords: environmental DNA, quantitative PCR, methods, filter pore size, preservation, extraction}
+Manuscript type: Original Article \newline Open Research Statement: Data are already published and publicly available, with those publications properly cited in this submission. The repository for code can be found at: https://github.com/eandrusz/MURI_Mod1_Needle_Haystack \newline \textit{Keywords: environmental DNA, quantitative PCR, methods, filter pore size, preservation, extraction}
 
 \newpage
 
