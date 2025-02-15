@@ -1,0 +1,94 @@
+---
+title: "inhibiton"
+format: html
+editor: visual
+---
+
+```{r}
+library(here)
+library(tidyverse)
+library(ggplot2)
+library(wesanderson)
+library(cowplot)
+a <- read_rds(here("data","experiments_merged_inhibition.RDS"))
+
+a2 <- a %>% 
+  select(c(sample, DNA_total_conc)) %>% 
+  filter(! is.na(DNA_total_conc)) %>% 
+  distinct()
+
+a <- a %>% 
+  select(-DNA_total_conc) %>% 
+  left_join(a2, by="sample") %>% 
+  filter(preservation != "later")
+
+```
+
+## Inhibition
+
+Can use the delta Ct in IPC as metric of inhibition...
+
+```{r}
+
+ggplot(a %>% filter(experiment == "v_ps"), 
+       aes(x=DNA_total_conc, y=inhibition_value, color = factor(filter_size), shape=factor(vol_filtered))) +
+  geom_point(size=3) + 
+  geom_hline(yintercept=0.5, linetype=2) + 
+  facet_wrap(~dilution_factor, scales="free_x") + 
+  theme_bw() +
+  scale_color_manual(breaks= c("1", "5"), values = c("1" = wes_palette(n=4, name="Chevalier1")[1], "5"=wes_palette(n=4, name="Chevalier1")[4])) +
+  labs(x="Total DNA Concentration (ng/uL)", y="Delta Ct of IPC", title="Volume / Pore Size Samples", color = "Pore Size (um)", shape = "Volume Filtered (L)")
+
+ggsave(here("figures","SUPFIG1_v_ps_inhibition.png")) 
+
+
+ggplot(a %>% filter(experiment=="v_ps"), aes(x=sample, y=inhibition_value, color=factor(dilution_factor))) +
+  geom_point(size=3) + 
+  geom_hline(yintercept=0.5, linetype=2) + 
+  facet_grid(~filter_size ~vol_filtered, scales="free") + 
+  theme_bw() +
+  theme(axis.text.x=element_blank()) +
+  scale_color_manual(breaks= c("10", "20","40","100"), values = wes_palette(n=4, name="Moonrise2")) +
+  labs(x="Sample ID", y="Delta Ct of IPC", title="Volume / Pore Size Samples", color = "Dilution Factor")
+
+ggsave(here("figures","SUPFIG2_v_ps_inhibition.png")) 
+
+ggplot(a %>% filter(experiment == "p_e"), 
+       aes(x=DNA_total_conc, y=inhibition_value, color=extraction, shape=preservation)) +
+  geom_point(size=3) + 
+  geom_hline(yintercept=0.5, linetype=2) + 
+  #geom_hline(yintercept=-0.5) +
+  facet_wrap(~dilution_factor, scales="free_x") + 
+  theme_bw() +
+  scale_color_manual(values=wes_palette(n=4, name="GrandBudapest1"), labels = c("PCI", "Qiagen","Zymo")) + 
+  scale_shape_manual(values=c(15,16,17,18),labels = c("longmires", "minus 80","desiccation", "shield")) +
+  labs(x="Total DNA Concentration (ng/uL)", y="Delta Ct of IPC", title="Preservation / Extraction Samples", color="Extraction", shape="Preservation")
+
+ggsave(here("figures","SUPFIG3_p_e_inhibition.png"))
+
+ggplot(a %>% filter(experiment == "p_e"), 
+       aes(x=sample, y=inhibition_value, color=factor(dilution_factor))) +
+  geom_point(size=3) + 
+  geom_hline(yintercept=0.5, linetype=2) + 
+  #geom_hline(yintercept=-0.5) +
+  facet_grid(~preservation~extraction, scales="free_x") + 
+  theme_bw() +
+  theme(axis.text.x=element_blank()) +
+  scale_color_manual(breaks= c("1", "10"), values = wes_palette(n=2, name="Moonrise2")) +
+  labs(x="Sample ID", y="Delta Ct of IPC", title="Preservation / Extraction Samples", color = "Dilution Factor")
+
+ggsave(here("figures","SUPFIG4_p_e_inhibition.png"))
+
+
+```
+
+Try linear model to see if preservative or extraction method explain inhibition
+
+```{r}
+
+testlm <- glm(inhibition_value ~ DNA_total_conc + preservation + extraction,
+  data = a)
+
+summary(testglm)
+
+```

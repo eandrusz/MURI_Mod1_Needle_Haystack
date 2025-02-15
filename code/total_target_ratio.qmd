@@ -1,0 +1,135 @@
+---
+title: "total_target_ratio"
+format: html
+editor: visual
+---
+
+```{r}
+library(here)
+library(tidyverse)
+library(ggplot2)
+library(cowplot)
+library(wesanderson)
+
+a <- read_rds(here("data","experiments_merged.RDS"))
+
+a <- a %>% 
+  mutate(preservation = case_when(preservation=="self-preserving" ~ "desiccation",
+                                  TRUE ~ preservation))
+```
+
+## Volume filtered / Pore size
+
+```{r}
+
+pp1 <- ggplot(a %>% filter(experiment == "v_ps"), 
+              aes(x=factor(vol_filtered), y=DNA_total_conc, fill=factor(filter_size))) + 
+  geom_boxplot() + 
+  theme_bw() + 
+  scale_fill_manual(breaks= c("1", "5"), values = c("1" = wes_palette(n=4, name="Chevalier1")[1], "5"=wes_palette(n=4, name="Chevalier1")[4])) +
+  labs(y="ng/uL", x = " ", title = "Total DNA",  fill="Pore Size (um)")
+
+pp2 <- ggplot(a %>% filter(experiment == "v_ps"), 
+              aes(x=factor(vol_filtered), y=Tt_total_conc, fill=factor(filter_size))) + 
+  geom_boxplot() + 
+  theme_bw() + 
+  scale_fill_manual(breaks= c("1", "5"), values = c("1" = wes_palette(n=4, name="Chevalier1")[1], "5"=wes_palette(n=4, name="Chevalier1")[4])) +
+  labs(y="copies/uL", x = " ", title = "Target DNA",  fill="Pore Size (um)")
+
+pp3 <- ggplot(a %>% filter(experiment == "v_ps"), 
+              aes(x=factor(vol_filtered), y=ratio_tt_total, fill=factor(filter_size))) + 
+  geom_boxplot() + 
+  theme_bw() + 
+  scale_fill_manual(breaks= c("1", "5"), values = c("1" = wes_palette(n=4, name="Chevalier1")[1], "5"=wes_palette(n=4, name="Chevalier1")[4])) +
+  labs(y="ratio", x = "Volume Filtered (L)", title = "Ratio Target:Total DNA",  fill="Pore Size (um)")
+
+# # put plots next to each other 
+plot_grid(pp1, pp2, pp3,
+          labels = c("A", "B", "C"),
+          ncol = 1, nrow = 3, rel_widths = c(.8,1.5,.8))
+
+ggsave(here("figures","v_ps_ratios_3panel.png"),width=6,height=8, units="in")
+
+```
+
+## Preservation / Extraction
+
+```{r}
+
+p1 <-  ggplot(a %>% filter(experiment == "p_e") %>% filter(preservation != "later"), 
+              aes(x=preservation, y=DNA_total_conc, fill=extraction)) + 
+  geom_boxplot() + 
+  theme_bw() + 
+  scale_fill_manual(values=wes_palette(n=4, name="GrandBudapest1"), labels = c("PCI", "Qiagen","Zymo")) + 
+  labs(y="ng/uL", x = " ", title = "Total DNA",  fill="Extraction Method")
+
+p2 <-  ggplot(a %>% filter(experiment == "p_e") %>% filter(preservation != "later"), 
+              aes(x=preservation, y=Tt_total_conc, fill=extraction)) + 
+  geom_boxplot() + 
+  theme_bw() + 
+  scale_fill_manual(values=wes_palette(n=4, name="GrandBudapest1"), labels = c("PCI", "Qiagen","Zymo")) + 
+  labs(y="copies/uL", x = " ", title = "Target DNA", fill="Extraction Method") 
+
+p3 <-  ggplot(a %>% filter(experiment == "p_e") %>% filter(preservation != "later"),   
+              aes(x=preservation, y=ratio_tt_total, fill=extraction)) + 
+  geom_boxplot() + 
+  theme_bw() + 
+  scale_fill_manual(values=wes_palette(n=4, name="GrandBudapest1"), labels = c("PCI", "Qiagen","Zymo")) + 
+  labs(y="ratio", x = "Preservation Method", title = "Ratio Target:Total DNA", fill="Extraction Method")
+
+  
+# # put plots next to each other 
+plot_grid(p1, p2, p3,
+          labels = c("A", "B", "C"),
+          ncol = 1, nrow = 3, rel_widths = c(.8,1.5,.8))
+
+ggsave(here("figures","p_e_ratios_3panel.png"),width=6,height=8, units="in")
+```
+
+Compare across the two experiments with only the same setup (3 L, 5 um, longmires, PCI)
+
+```{r}
+
+# ppp1 <- ggplot(a %>% filter(filter_size==5, vol_filtered==3, preservation=="longmires", extraction=="PCI"), 
+#               aes(x=factor(homogenized), y=DNA_total_conc, , fill=factor(homogenized))) + 
+#   geom_boxplot() + 
+#   theme_bw() + 
+#   labs(y="ng/uL", x = " ", title = "Total DNA",  fill="Source Water")
+# 
+# ppp2 <- ggplot(a %>% filter(filter_size==5, vol_filtered==3, preservation=="longmires", extraction=="PCI"), 
+#               aes(x=factor(homogenized), y=log10(Tt_total_conc), , fill=factor(homogenized))) + 
+#   geom_boxplot() + 
+#   theme_bw() +
+#   labs(y="log10 copies/uL", x = " ", title = "Target DNA",  fill="Source Water")
+# 
+# ppp3 <- ggplot(a %>% filter(filter_size==5, vol_filtered==3, preservation=="longmires", extraction=="PCI"),
+#               aes(x=factor(homogenized), y=log10(ratio_tt_total), fill=factor(homogenized))) + 
+#   geom_boxplot() + 
+#   theme_bw() + 
+#   labs(y="log10 ratio", x = "Source Water", title = "Ratio Target:Total DNA",  fill="Source Water")
+# 
+# # # put plots next to each other 
+# plot_grid(ppp1, ppp2, ppp3,
+#           labels = c("A", "B", "C"),
+#           ncol = 1, nrow = 3, rel_widths = c(.8,1.5,.8))
+# 
+# ggsave(here("figures","source_water_ratios_3panel.png"),width=6,height=8, units="in")
+
+
+```
+
+## Rare target in general
+
+```{r}
+
+# a2 <- a %>% 
+#   mutate(conc_copy_L= Tt_total_conc*(50/vol_filtered))
+# 
+# ggplot(a2, aes(x=factor(homogenized), y=log10(ratio_tt_total), , fill=factor(homogenized))) + 
+#   geom_boxplot() + 
+#   theme_bw() +
+#   labs(y="Log10 ratio target:total DNA", x = "Source Water",  fill="Source Water")
+# 
+# ggsave(here("figures","justratio.png"))
+
+```

@@ -1,0 +1,135 @@
+---
+title: "DolphinSetUp"
+format: html
+editor: visual
+---
+
+## Organizing and combining two datasets 
+
+### R set up 
+```{r}
+library(here)
+library(tidyverse)
+
+```
+
+### Volume and pore size dataset 
+```{r}
+v_ps_raw <- read.csv(here("data","MURI_Module1_datasheets - 01_bangor_fielddeployment1_Sept2022.csv"))
+
+v_ps <- v_ps_raw %>% 
+  filter(task == "filter_vol") %>% # only keep samples used for the pore size x volume comparison 
+  filter(extraction == "PC") %>% # we collected a few via Smith Root and extracted with Qiagen, remove
+  select(c(lab_ID, rep, filter_size, vol_filtered, dilution_factor, DNA_20_conc, DNA_total_conc, Tt_Ct, 
+           Tt_conc, Tt_total_conc, IPC_CT, IPC_meanNTC, IPC_meanNTC_SD, inhibition_value, inhibited, use))
+
+## NOTE: go back to raw later and get stats for efficiency, LOD, etc. for all runs
+
+# fill in total DNA for all samples 
+v_ps_qubit <- v_ps %>% 
+  select(c(lab_ID, DNA_total_conc)) %>% 
+  drop_na(DNA_total_conc) %>% 
+  distinct() # there are multiple per row because of multiple dilutions - just need one per sample here 
+
+v_ps2 <- v_ps %>% 
+  left_join(v_ps_qubit %>% rename(total_DNA=DNA_total_conc), by= "lab_ID") %>% 
+  select(c(lab_ID, total_DNA, inhibition_value, dilution_factor, filter_size, vol_filtered)) %>% 
+  mutate(inhibition_value = as.numeric(inhibition_value)) %>% 
+  mutate(total_DNA = as.numeric(total_DNA))
+
+v_ps_tt <- v_ps %>% 
+  filter(use == 1) %>% # only use the non-inhibited samples for actual quants of t tursiops 
+  filter(inhibited == 0) # looks like a few inhibited slipped through so get rid of those guys for now 
+
+## NOW RATIO!!! 
+v_ps_tt <- v_ps_tt %>% 
+  mutate(ratio_tt_total = ((Tt_total_conc/1.132e+10)/DNA_total_conc)) 
+
+## target is 86 bp - use NEB https://nebiocalculator.neb.com/#!/dsdnaamt
+## 1.132e+10 copies of target = 1 ng of target 
+
+v_ps_merge <- v_ps_tt %>% 
+  mutate(experiment="v_ps", extraction="PCI",preservation="longmires", homogenized=1) %>% 
+  rename(sample=lab_ID, tech_rep=rep) %>%
+  select(c("experiment","sample","tech_rep","filter_size","vol_filtered","DNA_total_conc","Tt_total_conc","ratio_tt_total","extraction","preservation", "homogenized"))
+
+```
+
+Now let's deal with the other experiment 
+
+```{r}
+p_e_raw <- read.csv(here("data","MURI_Module1_datasheets - 06_matrix_Mar2023.csv"))
+
+p_e <- p_e_raw %>% 
+  filter(filter_v_liq == "filter") %>% # only keep samples used filter 
+  filter(smithroot_v_vaccum == "SR") %>% # only keep samples filtered on site by SR  
+  filter(inhibited==0) %>% # for now, only keep things not inhibited 
+  mutate(quantity=as.numeric(quantity)) %>% 
+  mutate(Tt_total_conc=dilution*quantity) %>% 
+  mutate(DNA_total_conc=as.numeric(total_DNA)) %>% 
+  mutate(ratio_tt_total = ((Tt_total_conc/1.132e+10)/DNA_total_conc)*100) %>% 
+  filter(dilution==10) # for now, just use 1:10 dilutions so we don't double count 
+
+p_e_merge <- p_e %>% 
+  mutate(experiment="p_e", vol_filtered="3L", filter_size="5um", homogenized=0) %>% 
+  select(c("experiment","sample","tech_rep","filter_size","vol_filtered","DNA_total_conc","Tt_total_conc","ratio_tt_total","extraction","preservation", "homogenized"))
+
+```
+
+Now let's merge them together 
+
+```{r}
+
+all_data <- rbind(v_ps_merge, p_e_merge)
+
+all_data <- all_data %>% 
+  separate_wider_position(vol_filtered, c(vol = 1, units = 1)) %>% 
+  select(-units) %>% 
+  mutate(vol_filtered = as.numeric(vol)) %>% 
+  separate_wider_position(filter_size, c(poresize = 1, units = 2)) %>% 
+  select(-units) %>% 
+  mutate(filter_size = as.numeric(poresize)) %>% 
+  select(-c(vol,poresize))
+
+write_rds(all_data, here("data","experiments_merged.RDS"))
+write_csv(all_data, here("data","experiments_merged.csv"))
+```
+
+Now we need to keep things that were inhibited to look at inhibition 
+
+```{r}
+
+v_ps_inhib <- v_ps %>% 
+  mutate(ratio_tt_total = ((Tt_total_conc/1.132e+10)/DNA_total_conc)) %>% 
+  mutate(experiment="v_ps", extraction="PCI",preservation="longmires", homogenized=1) %>% 
+  rename(sample=lab_ID, tech_rep=rep) %>%
+  select(c("experiment","sample","tech_rep","filter_size","vol_filtered","DNA_total_conc","Tt_total_conc","ratio_tt_total","extraction","preservation", "homogenized","inhibition_value", "dilution_factor", "inhibited"))
+
+p_e_inhib <- p_e_raw %>% 
+  filter(filter_v_liq == "filter") %>% # only keep samples used filter 
+  filter(smithroot_v_vaccum == "SR") %>% # only keep samples filtered on site by SR  
+  mutate(quantity=as.numeric(quantity)) %>% 
+  mutate(Tt_total_conc=dilution*quantity) %>% 
+  mutate(DNA_total_conc=as.numeric(total_DNA)) %>% 
+  mutate(dilution_factor=as.numeric(dilution)) %>% 
+  mutate(ratio_tt_total = ((Tt_total_conc/1.132e+10)/DNA_total_conc)*100) %>% 
+  mutate(experiment="p_e", vol_filtered="3L", filter_size="5um", homogenized=0) %>% 
+  select(c("experiment","sample","tech_rep","filter_size","vol_filtered","DNA_total_conc","Tt_total_conc","ratio_tt_total","extraction","preservation", "homogenized","inhibition_value", "dilution_factor", "inhibited"))
+
+all_data_inhib <- rbind(v_ps_inhib, p_e_inhib)
+
+all_data_inhib <- all_data_inhib %>% 
+  separate_wider_position(vol_filtered, c(vol = 1, units = 1)) %>% 
+  select(-units) %>% 
+  mutate(vol_filtered = as.numeric(vol)) %>% 
+  separate_wider_position(filter_size, c(poresize = 1, units = 2)) %>% 
+  select(-units) %>% 
+  mutate(filter_size = as.numeric(poresize)) %>% 
+  select(-c(vol,poresize)) %>% 
+  mutate(inhibition_value = as.numeric(inhibition_value))
+
+write_rds(all_data_inhib, here("data","experiments_merged_inhibition.RDS"))
+write_csv(all_data_inhib, here("data","experiments_merged_inhibiton.csv"))
+
+
+```

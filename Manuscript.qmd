@@ -1,0 +1,252 @@
+---
+format: 
+  # docx
+  pdf:
+    fig_caption: yes
+    keep_tex: yes
+    latex_engine: pdflatex
+    number_sections: no
+    extra_dependencies: float
+header-includes:
+- \usepackage{lineno}
+- \linenumbers
+- \usepackage{setspace}\doublespacing
+- \usepackage{float}
+- \floatplacement{figure}{H}
+
+# - \usepackage{gensymb}
+# - \geometry{verbose,letterpaper,tmargin=2.54cm,bmargin=2.54cm,lmargin=2.54cm,rmargin=2.54cm}
+bibliography: references.bib
+csl: ecological-applications.csl
+---
+
+## Not your average environmental DNA methods paper: Evaluating the effects of sampling, preservation, and extraction methods and target species yields
+
+Elizabeth Andruszkiewicz Allan$^{1\dagger}$, Ryan P. Kelly$^{1}$, Megan R. Shaffer$^{1}$, Kim M. Parsons$^{2}$
+
+$^{1}$ University of Washington, School of Marine and Environmental Affairs, 3737 Brooklyn Ave NE, Seattle, WA 98105, U.S.A.
+
+$^2$ Conservation Biology Division, Northwest Fisheries Science Center, National Marine Fisheries Service, National Oceanic and Atmospheric Administration, 2725 Montlake Blvd. E, Seattle, WA 98112, U.S.A.
+
+\vspace{1em}
+
+$^{\dagger}$ Corresponding author: [eallan\@uw.edu](mailto:eallan@uw.edu){.email} \vspace{1em}
+
+For submission to: \textit{Environmental DNA} \newline Manuscript type: Original Article \newline Open Research Statement: Data are already published and publicly available, with those publications properly cited in this submission. The repository for code can be found at: \newline Andruszkiewicz Allan et al. 2025. <XX> \newline \textit{Keywords: environmental DNA, quantitative PCR, methods, filter pore size, preservation, extraction}
+
+\newpage
+
+## Abstract
+
+There are many decisions to be made when sampling for eDNA analysis, whether using a targeted, single-species assay or a community-based metabarcoding. Of the entire workflow from sampling water to bioinformatic analyses, the first steps in the process of collecting water, filtering it, and preserving the filter membranes represent major decision points upon which the success of downstream processes depend. Though many previous studies have compared water volume filtered, filter pore size, and preservation and extraction methods, the conclusions are often that they produce different results, but it is unclear which is the optimal approach for a given purpose. Here, we investigate (1) the volume of water filtered and the filter pore size and (2) the preservation method and extraction method of samples with a specific lens on how these choices impact the detection of a single targeted species (Atlantic bottlenose dolphin, *Tursiops truncatus*, via qPCR, although in principle these findings apply to single-species assays more generally). We find that larger pore size filters (5 $\mu$m vs. 1 $\mu$m) and larger volumes of water (3 L vs. 1 L) maximize the ratio of amplifiable target DNA to total DNA. We also find that maximizing total DNA yield during extraction (phenol chloroform vs. two commercial kits) does not always increase target detection likely due to the concentration of inhibitors and co-extraction of off-target DNA. We also comment on variation including technical and biological variability between replicates, finding that by homogenizing source water before filtering removes much of the biological variation. Finally, we present a statistical model that allows for inclusion of data from samples collected and processed in different ways, enabling researchers to change protocols or include data from other field sampling efforts, thereby opening up more possibilities to extend datasets and analyses.
+
+## Introduction
+
+Since the first applications of detecting environmental DNA (eDNA) in water samples, many papers have been written comparing methodological choices in eDNA sample processing. Most of these have used more general primers to look at many species using a metabarcoding approach [e.g., @bizzozzero2024; @bowen2024; @coutant2021; @deiner2015; @deiner2018; @djurhuus2017; @li2018a; @liu2024; @majaneva2018]. The results of such methods comparisons often demonstrate small differences between either richness or relative abundance of taxa detected but it is unclear which is the "right" or "best" protocol. Other comparisons look at maximizing total DNA, assuming that more total DNA will yield more target DNA. However, this may not always be true and may vary with the target taxa (i.e., microbes vs. metazoans). Fewer papers have investigated the effect of methodological choices on a single target species [@capo2020; @eichmiller2016; @fukuzawa2023; @garcía2024a; @hinlo2017; @liang2013; @mauvisseau2021; @minamoto2016; @spens2017] and to our knowledge, no papers have discussed how to combine data collected from different collection and processing protocols. Here, we focus on the first stages of sample collection and processing by comparing the volume of water sampled, the filter pore size, preservation method, and extraction method for a single target vertebrate species, bottlenose dolphin (\textit{Tursiops truncatus}).
+
+In early proof-of-concept eDNA studies, the volume of water collected ranged from very small volumes (e.g., 15 mL [@foote2012]) to much larger volumes as it was unclear what was required for this new application and tool (see [@takahashi2023a] for review). Studies using metabarcoding approaches revealed a positive correlation between the number of unique species detected and the volume of water filters up to a certain point (i.e., species accumulation curves) [@bessey2020]. In studies employing a single targeted species approach (i.e. qPCR or dPCR or ddPCR), larger volumes of water filtered resulted in more reliable detection of the target species [@capo2020a; @liang2013]. A recent review paper found that \~40% of studies use 1 L of water [@takahashi2023b], which seems to strike the balance of maximizing probability of detection while working within the bounds of what is practical, but little has been done to quantify or understand the relationship between concentrating more target DNA alongside more non-target DNA. Additionally, the effects of inhibition, whether by chemical inhibitors alone or from large amounts of non-target DNA, are poorly understood but are expected to increase with increasing volume of water filtered or decreasing filter pore size.
+
+Though the field of eDNA analysis is relatively new, the concepts are not new and have been used for decades for other applications, primarily for detecting and characterizing microbial community composition from various environments [@ogram1987a]. This resulted in most methodological choices stemming from the microbial field as well. In particular, the pore size of the filter used to capture DNA for microbial work must be extremely small and therefore in eDNA field sampling, the most common pore size filter still used is 0.45 um [@tsuji2019a]. This pore size might work very well for capturing bacteria, but if the target taxa are macroorganisms rather than microbes, the target will be co-captured along with many more off-target microbes and thus make it more difficult to detect as the macroogransims are now a rarer target [@power2023]. Therefore, this may not be the best choice but it has been used by default for many years in eDNA studies.
+
+Similarly, the optimal DNA extraction methods for microorganisms DNA may be very different than those for macroorganisms. For example, phenol-chloroform-isoamyl extractions are known to maximize total DNA recovery [@ramón-laca2021a], but the total DNA recovered may include non-target taxa (i.e., bacteria) that then overwhelm one or more non-microbial target taxa in the DNA extract. In a recent review of eDNA methodology, @tsuji2019a found that over 75% of papers used a commercial kit for eDNA extraction. Again, the majority of studies comparing pore size, preservation method, and extraction method compare multi-species detection via metabarcoding, finding slight differences that may or may not be correlated with target taxa [@rodrigueza; @djurhuus2017a; @garcía2024b; @turner2014a; @mauvisseau2021a; @minamoto2016a; @eichmiller2016a; @li2018b; @deiner2015a; @kumar2019c]. However, it is never abundantly clear which is the "optimal" protocol.
+
+Part of what makes it difficult to assess and compare different protocols is underlying variability between samples. Here, we define biological replicates as replicate water samples / filters taken from the same environment and technical replicates as replicate reactions for a given molecular analysis (e.g., qPCR) from the same water sample / filter. True biological variability will result in biological replicates generating slightly different results so without accounting for this, it can be difficult to attribute observed differences to either protocols or biological variability. This is very common in presence / absence metabarcoding results of many species, but it is also true for a single species in a quantitative assay such as quantitative PCR (qPCR) or digital or droplet digital PCR (dPCR or ddPCR). Although biological replicates taken next to each other may give slightly different results due to irreducible sampling variance, often comparisons of methods do not explicitly separate biological variability from methodological variability. A few other studies have looked specifically at how variability (as measured by coefficient of variability) can be impacted by methodology as well [@mauvisseau2021b; @eichmiller2015; @minamoto2016]. Here we isolate technical/biological variability and method variability and also look at homogenized versus non-homogenized water to further investigate how different biological replicates are when source water is well mixed versus grab samples.
+
+Finally, it is very common that researchers are interested in combining results from samples collected or processed in different ways. Whether combining data from different published papers or across different experiments where protocols have evolved or adapted over time, the best way to integrate qPCR data across datasets with differing field or laboratory protocols has been challenging. However, given a set of samples collected from a common pool but subsequently treated differently, it becomes possible to isolate the effects of different methodological choices on a defined outcome (here, target-species eDNA concentration), and derive a straightforward model to "correct" observed concentrations for different methodological choices. This shows precisely how different protocol choices affect eDNA quantification and importantly allows for comparison across datasets by accounting for, rather than ignoring, the differences.
+
+## Methods
+
+Two sets of experiments were conducted for this study (@tbl-setup). In the first, the volume of water filtered and filter pore size varied while the preservation and extraction methods remained constant. This experiment also used homogenized source water to reduce true biological variability in replicate samples and specifically measure the effect of the difference in volume filtered and filter pore size. The second set of experiments held volume filtered and filter pore size constant while varying the type of preservation and the extraction method. Here, source water was not homogenized and true biological variability (i.e., bottle to bottle variation) is both observed and included. After DNA extraction, all extracts from both experiments followed the same procedures for total DNA quantification, assessment for inhibition, and quantification of target DNA via quantitative PCR (qPCR).
+
+|                                                | Campaign 1                                         | Campaign 2                                                |
+|-------------------|-----------------------|------------------------------|
+| Date                                           | September 2022                                     | February 2023                                             |
+| Environment                                    | Net enclosure open to environment, \~15$^{\circ}$C | Closed, recirculating, filtered pool, \~20$^{\circ}$C     |
+| Number of dolphins present at time of sampling | 3                                                  | 1                                                         |
+| Collection and filtration details              | Filtration occurred 4 hours after collection       | Collection and filtration in situ (i.e., 0 hour lag)      |
+| Homogenization                                 | Yes                                                | No                                                        |
+| Volume filtered (L)                            | 1, 3                                               | 3                                                         |
+| Pore size of filter ($\mu$m)                   | 1, 5                                               | 5                                                         |
+| Preservation method                            | Longmire's buffer                                  | Longmire's buffer, -80$^{\circ}$C, RNAShield, Desiccation |
+| Extraction method                              | Phenol-chloroform-isoamyl (PCI)                    | PCI, Qiagen Blood and Tissue, Zymo Miniprep               |
+
+: Details on the two marine eDNA field campaigns conducted in this study. {#tbl-setup}
+
+### Field sampling, filtration, preservation, extraction
+
+#### Campaign 1: Pore size and volume comparison
+
+Water samples were collected in Hood Canal near Bangor, Washington in September 2022 from a netted enclosure containing a small, managed population of Atlantic bottlenose dolphins (*Tursiops truncatus*). A total of 70 L of water was collected on site in large, clean carboys. Water was transported from the sampling site to the NOAA Northwest Fisheries Science Center (NWFSC) for processing, with an elapsed time of approximately 3 hours.
+
+At the lab, carboys were well mixed to homogenize the source water before splitting it into individual samples. Samples were assigned to a volume filtered treatment (1 L or 3 L) and a pore size treatment (1 $\mu$m or 5 $\mu$m), for a total of four treatments, each with three biological replicates (i.e., filters). All filter membranes were 47 mm diameter mixed cellulose ester (MCE) and water was filtered using a vacuum manifold and sterile, single use filter funnels. After filtration, filters were transferred with sterile forceps and to 5 ml tubes containing 2 ml of Longmire's buffer [@renshaw2015] and stored at room temperature for 2 months until DNA extraction. All filters were extracted using a phase lock protocol for phenol-chlorofom-isoamyl DNA purification (see @ramón-laca2021 for detailed protocol). Total DNA was quantified via a Qubit fluorometer.
+
+#### Campaign 2: Preservation and extraction comparison
+
+For the samples where preservation and extraction varied, water was collected in February 2023 from a closed pool with recirculating water and a filtration system with one dolphin inhabiting the pool at the time of sampling. Water samples were filtered on site *in situ* using a Smith Root Citizen Science sampler. For each water sample, 3 L of water was filtered onto a 5 $\mu$m pore size 47 mm diameter MCE self-preserving Smith Root filter [@thomas2019]. A total of 45 filters were collected over a time period of approximately 1 hour. The self-preserving filters were transported back to NOAA NWFSC within approximately 3 hours, where samples were randomized across the time of collection to various preservation treatments (n = 4 total; Longmire's buffer, -80$^{\circ}$C freezer, desiccation via self-preserving at room temperature, and Zymo DNA/RNA Shield) and extraction method (n = 3 total; phenol-chloroform-isoamyl alcohol, Qiagen Blood and Tissue Kit, Zymo Mini Prep Kit). Kits were scaled up accordingly to process 2 mL of preservative. Two combinations of preservation and extraction was not completed (Longmire's buffer with Qiagen Blood and Tissue and Longmire's buffer with Zymo Mini Prep Kit), resulting in not a full factorial design but 10 combinations of the two treatments. All samples were preserved for 3 months before being extracted. Total DNA of all extracts were quantified via a Qubit fluorometer.
+
+### Inhibition testing and target DNA quantification
+
+All samples were assessed for inhibition by using an internal positive control (IPC) assay that was multiplexed with the target DNA assay by utilizing two different reporters. The IPC assay used was TaqMan Exogenous Internal Positive Control Reagents (EXO-IPC) (Applied Biosystems, USA). The IPC was included in all environmental samples and also in no template controls (NTC). Samples were deemed inhibited if the difference in mean Ct value of the IPC measured in the sample and the mean Ct value of the IPC measured in the sample was greater than 0.5. Inhibited samples were diluted and re-run until the delta Ct was less than 0.5.
+
+Target DNA (*T. truncatus*) was quantified using a regionally-specific assay [@brasseale] targeting a 80 base pair fragment of the cytochrome B gene region using a synthetic gBlock (IDT) as a standard curve from 100,000 copies/$\mu$L to 1 copy/$\mu$L in a ten-fold dilution series. All samples were run in triplicate and each plate contained three no template controls (NTCs). The forward primer sequence was 5'-TTATTCTTCCATTCATCATCAC-3', the reverse primer sequence was 5'-GTGGGGTTGTTGGATCCTGT-3', and the probe sequence was JUN-GAATAGTAGGTGAACGGCTGCCA-QSY. Each reaction contained, per 10 $\mu$L reaction: 5 $\mu$L of TaqMan Gene Expression Master Mix (Applied Biosystems), 0.4 $\mu$L of 10 $\mu$M forward primer, 0.4 $\mu$L of 10 $\mu$M reverse primer, 0.2 $\mu$L of 10 $\mu$M probe, 2 $\mu$L of DNase/RNase free water and 2 $\mu$L of DNA. Reactions were with an initial denaturation of 95C for 10 min, followed by 45 cycles of denaturation (94C for 15 sec) and annealing/extension (60C for 1 min).
+
+### Optimizing the target-to-total DNA ratio
+
+Our metric of interest is the ratio of target DNA (as measured by qPCR) to total DNA (as measured by Qubit). The units of target DNA are copies per volume whereas total DNA is mass per volume. We converted the total DNA from mass to copy number by using the length of the fragment, the average mass of each base pair, and Avogadro's number (Equation 1). This gives us the concentration in copy/$\mu$L if all the total DNA in the extract were 80 base pair fragments. Rather than using the exact molecular weight of the target DNA, we use an average molecular mass of a DNA base pair (618 g/mole) given that we know that all genomic DNA is not target DNA. This allows us to make a ratio by having both quantities in the same units, using:
+
+$$
+C_{total DNA} [copies/\mu L] =  \frac{C_{total DNA} [ng/\mu L]*6.022*10^{23} [copy/mol]}{MW [g/mol]*10^9 [ng/g]} 
+$$
+
+Then the ratio of target to total DNA is calculated simply by:
+
+$$
+Ratio = \frac{C_{target DNA}[copy/\mu L]}{C_{total DNA} [copy/\mu L]} 
+$$
+
+### Linear models to compare different methodological choices
+
+Here, we present two linear models to quantify how different methodological choices (volume filtered, filter pore size, preservation method, extraction method) impact target quantification. Given that for each field campaign, the water sampled all comes from a common pool, we can attribute the differences in target quantification to (1) sampling variability, and (2) the differences in methodological choices in collection and processing. Because we did not have a full factorial sampling design over our two field campaigns, we developed two closely related models: one predicting concentration as a function of volume filtered and pore size, and the other predicting concentration as a function of preservation and extraction methods.
+
+In both models, (log) observations of concentrations of target DNA are treated hierarchically, with observations from technical replicate *i* , bottle *j*, treatment *k*, and campaign *m* drawn from a nested series of normal distributions: $$ y_{ijkm} \sim N(\mu_{jkm},\sigma) $$ $$ \mu_{jkm} \sim N(\theta_{km},\tau) $$ $$ \theta_{km} \sim N(\phi_m, \nu) $$
+
+where $\mu_{jkm}$ is the mean of each biological replicate (i.e, bottle-level mean) and $\sigma$ is the standard deviation among technical replicates within a biological replicate. Bottle-level means are in turn treated as samples from a treatment-level distribution of mean $\theta_{km}$ and standard deviation $\tau$. Finally, all treatment-level means are treated as draws from a campaign-level (overall) distribution of mean $\phi_m$ and standard deviation $\nu$.\
+
+We first model the effects of volume filtered and pore size filter across two field campaigns as:
+
+<!-- model.matrix(~ 0 + reality_idx + pore_size_um + logVol, data = data_small) -->
+
+$$
+\theta_{km} =  \beta X
+$$
+
+where $\beta$ is a vector of regression coefficients having the same length as $\theta$, and $X$ is the design matrix mapping different combinations of volume filtered and pore size (i.e., treatments) to the data.
+
+The second model is identical, but for treatments of different preservation and extraction methods, and having only a single campaign, such that it requires only the first two hierarchical levels.
+
+The priors for both models were the same and were as follows (Equations 5-8): $$ \mu_{jkm} \sim N(0,10) $$ $$ \sigma \sim gamma(1,1) $$ $$ \tau \sim gamma(1,1) $$ $$ \beta \sim N(0,5) $$
+
+The models were both implemented in RStan.
+
+## Results
+
+### Total DNA, target DNA, ratio of target to total DNA
+
+For the samples collected in Campaign 1, we compared volume filtered and filter pore size (@tbl-v-ps, @fig-ttr-vps). Given the same volume of water filtered, the 1 $\mu$m filters had higher total and target DNA as compared to the 5 $\mu$m filters. Given the same pore size, the 1 L filters had less total and target DNA than the 3 L filter. However, the 1 $\mu$m filters with 3x volume filtered had more than 3x total DNA (340% of mean value) and more than 3x target DNA (434% of mean value). The 5 $\mu$m filters showed a similar pattern with the 3x volume samples having more than 3x total DNA (325% of mean value), but showed much more than 3x target DNA (514% of mean value). When converting these to ratios of target to total DNA, 1 $\mu$m filters were lower than 5 $\mu$m filters and the 1 L samples were lower than the 3 L samples, resulting in the 5 $\mu$m and 3 L filter having the highest ratio of target to total DNA.
+
+Here, the 1 $\mu$m filters captured more total DNA than 5 $\mu$m filters did, presumably across a range of particle sizes; we assume that the material captured on a 5 $\mu$m filter is a subset of the material on a 1 $\mu$m filter, with the larger pore size selecting for larger particles and not capturing particles \< 5 $\mu$m (at least initially; at some point as the filter clogs it will have an effective pore size smaller than 5 $\mu$m and capture smaller particles). To the extent that our target eDNA fragment -- from vertebrate mtDNA -- is more likely to occur in larger particles (due to the size of mammalian cells, etc), we expect and observe a larger target:total ratio with 5 $\mu$m filters [@power2023a].
+
+We also found that the level of inhibition was higher in the 3 L samples versus the 1 L samples given the same pore size and was about the same in 1 $\mu$m versus 5 $\mu$m filters given the same volume filtered (Supplemental Figures 1 and 2).
+
+| Volume filtered (L) | Filter pore size (𝜇m) | Mean total DNA (ng/𝜇L) | Standard deviation total DNA | Mean target DNA (copies/𝜇L) | Standard deviation target DNA | Ratio tar- get:total DNA |
+|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+| 1                   | 1                     | 51.4                   | 3.93                         | 7172                        | 1030                          | 1.14e-07                 |
+| 1                   | 5                     | 39.9                   | 6.08                         | 5908                        | 879                           | 1.22e-07                 |
+| 3                   | 1                     | 175                    | 20.7                         | 31191                       | 2294                          | 1.48e-07                 |
+| 3                   | 5                     | 127                    | 11.6                         | 30385                       | 1540                          | 1.99e-07                 |
+
+: Volume and Pore Size Experiment Results. For two volumes filtered and two pore sizes, the mean and standard deviation of total DNA (ng/$\mu$L) and target DNA (copies/$\mu$L) recovered, and the ratio of mean target to total DNA. {#tbl-v-ps}
+
+![Total DNA, Target DNA, and Ratio from Volume and Pore Size Experiment. Panel A shows total DNA recovery (ng/$\mu$L) as a function of volume of water filtered and filter pore size. Panel B shows target DNA (copies/$\mu$L) as a function of volume of water filtered and filter pore size. Panel C shows the ratio of target to total DNA as a function of volume of water filtered and filter pore size.](figures/v_ps_ratios_3panel.png){#fig-ttr-vps}
+
+For the second campaign comparing preservation and extraction methods, the total DNA varied across methods, with PCI extractions having consistently higher yields than either kit across preservation methods (@fig-ttr-pe). However, target DNA was similar across preservation and extraction methods. The resulting ratio of target to total DNA exhibits the opposite trend of the total DNA yield, where PCI has the lowest ratio, then the Qiagen kit, and finally the Zymo kit with the highest ratio (i.e., the most desirable for a particular targeted assay). For all samples extracted with the Zymo kit, the Zymo DNA/RNA Shield had the highest ratio of the three preservatives tested. We found that the samples preserved in Longmire's and extracted with PCI both had higher total DNA and required larger dilutions to remove inhibition as measured by the internal positive control (Supplemental Figures 3 and 4).
+
+![Preservation and extraction total DNA (Panel A), target DNA (Panel B), and ratio of target:total DNA (Panel C).](figures/p_e_ratios_3panel.png){#fig-ttr-pe}
+
+### Biological variability with homogenized and non-homogenized samples
+
+In the first campaign, a large volume of water was collected and homogenized before splitting into the different treatments of pore size and volume filtered. In the second campaign, individual water samples were grabbed from the source (well mixed, relatively small pool) but not homogenized before filtering. In both experiments, the coefficient of variation between technical replicates (@fig-cv, X markers) was less than the coefficient of variation between biological replicates (@fig-cv, colored circles), which was less than the coefficient of variation between treatments (@fig-cv, dashed lines; except in two sets of biological replicates). For the volume and pore size experiment, we also calculated the coefficient of variation assuming a linear increase in concentration with volume filtered (@fig-cv, Panel A, dotted line). The coefficient of variation across treatments in the homogenized water in Campaign 1 (pore size and volume) and adjusting for the volume filtered was 0.24, compared to a coefficient of variation of 0.35 across treatments in Campaign 2. For the homogenized samples, the mean coefficient of variation between biological replicates was 0.1, whereas the mean coefficient of variation between biological replicates in the non-homogenized samples was 0.2 (@fig-cv). The observed biological variability did not seem to be related to the methodological choices (@fig-cv). Given how close the biological variability was to the variability across treatments especially in the preservation and extraction experiment, the linear models are particularly helpful to distinguish sources of variability.
+
+![Coefficient of variation (CV) of target DNA between technical replicates (Xs) and biological replicates (circles) in homogenized water from Campaign 1 (Panel A) and non-homogenized water from Campaign 2 (Panel B). Dashed lines show the coefficient of variation from all samples across all treatments. In Panel A, the dashed line shows all treatments but the dotted line shows the coefficient of variation if the concentrations are adjusted for the volume filtered in the experiment.](figures/cv_2panel.png){#fig-cv}
+
+### Models to combine samples processed with different methods
+
+Our two sets of experiments provided an opportunity to use two models to combine samples with different methodological choices from the same common reality (e.g., different pore size and volume filtered in the first experiment and different preservation and extraction methods in the second experiment). Because in a single campaign, the samples came from the same source water (and in the case of the first experiment, the source water was homogenized), we can assess how the different methodological choices affect differences in target DNA recovery through the use of linear models.
+
+#### Pore size and volume sampled
+
+The first linear model was used to investigate the effects of different filter pore sizes and volumes on target DNA concentrations (Table 3, @fig-v-ps-model, Supplemental Figure 5). Each campaign has it's own intercept, reflecting the two different concentrations of target DNA in the underlying pools of water sampled for each campaign. We quantified different treatment effects relative to the base case of filtering 1 L through a filter of 1 $\mu$m pore size; the coefficients for the effects of different treatments reflect departures from this baseline method. As with any similar analysis of variance (ANOVA), the choice of reference condition is arbitrary and does not affect the conclusions and 1 L filtered.
+
+We find no meaningful marginal effect of changing from 1 $\mu$m to 5 $\mu$m pore size, after controlling for volume filtered (Table 3), but do see a greater-than-expected increase in target concentration by increasing sampling effort from 1 L to 3 L of water filtered. Rather than a linear increase with volume filtered (i.e., a parameter value of 1), we find an estimated scaling factor of 1.43 (95% posterior CI: 1.14 -- 1.71).
+
+```{=tex}
+\begin{table}[H]
+\caption{Model Parameters for Volume and Pore Size Experiment. Coefficients in bold are meaningfully different than zero.}
+\label{tab:tbl-v-ps-model}
+\begin{tabular}{|l|r|r|r|r|r|r|}
+\hline
+Parameter & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Mean \\ Estimate\end{tabular}} & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Standard\\ Deviation\end{tabular}} & \multicolumn{1}{l|}{2.5\% CI} & \multicolumn{1}{l|}{97.5\% CI} & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Effective\\ Sample Size\end{tabular}} & \multicolumn{1}{l|}{R hat} \\ \hline
+Campaign 1 & 8.81 & 0.134 & 8.55 & 9.09 & 2859 & 1.002 \\ \hline
+Campaign 2 & 11.2 & 0.271 & 10.6 & 11.7 & 2626 & 1.002 \\ \hline
+Pore Size 5 $\mu$m & -0.0937 & 0.157 & -0.409 & 0.214 & 3157 & 1.001 \\ \hline
+Log Volume & \textbf{1.43} & 0.140 & 1.14 & 1.71  & 3456 & 1.000 \\ \hline
+\end{tabular}
+\end{table}
+```
+![Volume and Pore Size Linear Model Results. The model uses technical replicates (grey x's) to generate biological replicate, or bottle, means (blue circles), and bottle means are then fed into treatment means (yellow circles). Error bars show 2.5% and 97.5% confidence intervals.](figures/v_ps_model_results.png){#fig-v-ps-model}
+
+#### Preservation and extraction methods
+
+Here, the source water was the same for all samples so there is a single intercept, which represents preservation by -80$^{\circ}$C and extraction by PCI (i.e., the base case for treatment type); again, the coefficients for treatment effects indicate deviation from those methodological choices (Table 4, @fig-p-e-model, Supplemental Figure 6). We find no meaningful effects of preservation or extraction method -- including interactions among a subset of these -- on our target eDNA concentration, with one exception: desiccation as a preservation method yielded systematically less target eDNA than other methods (mean posterior coefficient estimate = -0.894, 95% posterior CI -1.37 to -0.429). Desiccation retains approximately 40% of target eDNA relative to what would be retained by preserving filters at -80$^{\circ}$C immediately after filtering. Across a broad range of methodological choices, our results suggest rougly even performance in recovery of target DNA with only a few departures.
+
+```{=tex}
+\begin{table}[H]
+\caption{Model Parameters for Preservation and Extraction Experiment. Coefficients in bold are meaningfully different than zero.}
+\label{tab:tbl-p-e-model}
+\begin{tabular}{|l|r|r|r|r|r|r|}
+\hline
+Parameter & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Mean \\ Estimate\end{tabular}} & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Standard\\ Deviation\end{tabular}} & \multicolumn{1}{l|}{2.5\% CI} & \multicolumn{1}{l|}{97.5\% CI} & \multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Effective\\ Sample Size\end{tabular}} & \multicolumn{1}{l|}{R hat} \\ \hline
+(Intercept) & 12.8 & 0.166 & 12.5 & 13.1 & 1060 & 1.001 \\ \hline
+Desiccation & \textbf{-0.894} & 0.239 & -1.37 & -0.429 & 1313 & 1.001 \\ \hline
+Shield & -0.330 & 0.236 & -0.807 & 0.133 & 1323 & 1.000 \\ \hline
+Longmires & -0.130 & 0.234 & -0.593 & 0.320 & 1721 & 1.000 \\ \hline
+Qiagen & 0.195 & 0.238 & -0.281 & 0.660 & 1274 & 1.000 \\ \hline
+Zymo & 0.105 & 0.236 & -0.365 & 0.555 & 1307 & 1.001 \\ \hline
+Desiccation / Qiagen & 0.167 & 0.339 & -0.492 & 0.840 & 1544 & 1.000 \\ \hline
+Shield / Qiagen & -0.00194 & 0.337 & -0.673 & 0.672 & 1528 & 1.000 \\ \hline
+Desiccation / Zymo & 0.400 & 0.333 & -0.261 & 1.05 & 1626 & 1.001 \\ \hline
+Shield / Zymo & 0.124 & 0.337 & -0.523 & 0.821 & 1554 & 1.001 \\ \hline
+\end{tabular}
+\end{table}
+```
+![Preservation and Extraction Linear Model Results. The model uses technical replicates (grey x's) to generate biological replicate, or bottle, means (blue circles), and bottle means are then fed into treatment means (yellow circles). Error bars show 2.5% and 97.5% confidence intervals.](figures/p_e_model_results.png){#fig-p-e-model}
+
+#### Harmonizing samples across different protocols
+
+Therefore, for a given sample that was preserved or extracted one way, we can then calculate an adjusted concentration to reflect what the concentration likely would have been given a different preservation or extraction method. For example, if we wanted to combine the data from Campaign 1 with the data from Campaign 2, we would take the intercept for Campaign 1 (8.81), add -0.0937 for the 5 $\mu$m filter pore size and add 1.43\*log(3) for the volume filtered and have a log DNA concentration of 10.29 copies/$\mu$L, which was preserved in Longmire's and extracted via PCI. If we wanted to make this value comparable to the water sampled in Campaign 2 (which was 3L filtered on 5 $\mu$m filter with the interecept as -80$^{\circ}$C and PCI), we would take the intercept 12.8 and add -0.130 for the switch of preservation from -80$^{\circ}$C to Longmires to get a log DNA concentration of 12.67 copies/$\mu$L. Moving those out of log space, we can compare 29,436 copies/$\mu$L from Campaign 1 to 318,062 copies/$\mu$L in Campaign 2. Now we can quantitatively compare these concentrations because we have modeled the effects of different treatments explicitly. We can do this for any observational data where we have the combination of methods in our matrix and can translate.
+
+## Discussion
+
+### More DNA is not always better
+
+The natural inclination is to maximize capture of all DNA in order to capture more target DNA, either by using a smaller pore size filter or using a different extraction protocol. However, here we demonstrate that the metric to maximize is really the ratio of target to total DNA rather than total DNA. In other words, by using a filter with a smaller pore size or extracting more DNA via PCI rather than a commercial kit, there is more total DNA but a similar amount of target DNA, which ultimately makes the target a smaller percentage of the total DNA. By having a rare target in a larger pool of off-target DNA, other issues can arise associated with the concentration of various inhibitors. In both experiments, we demonstrate that the optimal methods for maximizing total DNA capture do not maximize the ratio of target to total DNA.
+
+In the volume and pore size experiment, we found that the amount of total DNA scaled approximately as expected with the volume of water filtered given the same pore size filter (for 1 $\mu$m filters, 3 L water samples had 340% the amount of total DNA as 1 L samples and for 5 $\mu$m filters 3 L had 318% of 1 L). However for target DNA for both pore size filters, the more target DNA was concentrated with larger volumes of water than expected (434% with 3x volume for 1 $\mu$m filters and 514% with 3x volume for 5 $\mu$m filters), a factor that can increase in importance for rare target species. Here, we demonstrate that collecting larger volumes of water will obviously result in higher concentrations of target DNA, but given the same volume of water collected, the smaller pore size filters (1 $\mu$m) collected more total DNA and more target DNA than the larger pore size filters (5 $\mu$m), but the ratio of target to total DNA was higher for the larger pore size filters (5 $\mu$m) and for the larger volume samples (3 L vs. 1 L), resulting in the highest ratio being 3 L of water filtered on a 5 $\mu$m filter.
+
+In the preservation and extraction experiment, given the same preservative, the PCI extractions maximized total DNA recovery, followed by the Qiagen Blood and Tissue Kit, while the Zymo kit recovered the lowest amount of total DNA. The amount of total DNA given the same extraction method but varying preservative varied with the -80$^{\circ}$C generally having the highest recovery except for Longmire's with the PCI extractions. In terms of target DNA, yields were the same order of magnitude with the -80$^{\circ}$C preservation having higher yield and lower variability than other preservatives and desiccation having lower yield and higher variability. However, because the target quantities were similar across preservation and extraction but the total DNA quantities varied, the pattern of the ratio of target to total DNA has the opposite pattern as the total DNA above, where PCI now has the lowest ratio for each preservative and the highest combination of preservative / extraction is DNA/RNA Shield with the Zymo extraction kit. It should be noted that this had the lowest total DNA yield, again emphasizing that more total DNA is not the metric for optimization but the ratio of target to total DNA.
+
+Some hypotheses of the differences in total, target, and ratio of total to target DNA across different pore sizes, preservation, and extraction methods include consideration of the mechanisms of filtration and the combinations and compatibility of preservatives and extraction kits. For the filter pore size, smaller pore sizes (here, 1 $\mu$m) will capture more bacteria which will contribute to the total DNA yield, but as in this study targeting dolphin DNA, are non-target. A larger pore size filter (here, 5 $\mu$m) will result in less capture of smaller organisms such as bacteria and will leave room for capturing more of the desired larger animal cells before the filter clogs or the designated volume has been filtered. It should be noted that this study was conducted in relatively shallow, near-shore, nutrient rich water. Deep sea or oligotrophic waters might concentrate less off-target DNA and the ratios found here are not necessarily portable to different environments.
+
+### Even when collecting water while looking at a dolphin, we are still looking for a needle in a haystack.
+
+The metric we are interested in maximizing is the target to total DNA ratio, however it is worth noting the absolute values of that ratio, especially given how sampling was conducted. In both sets of experiments, dolphins were present while the water was being collected. The absolute concentration of dolphin DNA was high, as expected. To generate the ratio of target to total DNA, the total DNA concentration has to be converted from units of mass per volume as measured by the Qubit fluorescence reader to copies per volume to match the units of the target DNA concentration as measured by qPCR. This conversion requires a fragment length, which here we use the length of the fragment targeted by the qPCR assay. Therefore, the denominator used in the ratio can be thought of as the total number of fragments that could possibly be target (here, dolphin).
+
+These percentages are very low. Even when sampling water while looking at the species of interest and using methods intended to maximize the target to total ratio (here, larger pore size filter and larger volume of water), the target is just 0.00001% of the total DNA. This corresponds relatively well with a recent study that used shotgun sequencing and found fish to be 0.00004% of the total reads from a 1 L water sample taken from a reef in Australia and filtered on a 0.2 $\mu$m nylon filter, frozen at -20$^{\circ}$C, and extracted using the Qiagen Blood and Tissue Kit [@stat2017]. In other words, the water sample has many things we are not interested in. In other words, water samples contain genetic material from many, many species that we are not interested in, and this is important to bear in mind within the context of very rare targets and the possibility of false negatives.
+
+### There are many choices and most are just fine.
+
+Though the total DNA yield varied with preservative and extraction choice, the amount of target DNA recovered was similar across methodological choices. Some preservative and extraction protocol combinations are less than ideal (i.e., desiccation with PCI), but most methodological combinations perform similarly. When selecting a combination of preservation and extraction methods, it is important to keep in mind the mechanisms of the different preservatives. For example, Longmire's buffer and DNA/RNA Shield are both lysis buffers, meaning that the DNA is actually preserved in the buffer and removed from the filter while the filter is submerged in the buffer. On the other hand, the self-preserving filters and storing filters in the -80$^{\circ}$C both work by desiccation and therefore the DNA is still on the filter when starting the extraction. Accordingly, as long as the extraction method is compatible with whether the DNA is still on the filter or in the buffer, there should not be large differences in target DNA yield. Again, the total DNA yield will differ based on extraction protocol (e.g., PCI will recover more total DNA), but the target DNA seems relatively robust to different preservation and extraction methods assuming compatibility between the two. This is also important as access to reagents and infrastructure like freezers may vary and logistical constraints may impact the decisions for preservation and extraction methods.
+
+### Responsibly combining data from different methods
+
+Particularly relevent for time series data or combining data from different projects, it is important to keep methods consistent. However, there are many reasons why one might want to combine data generated from different protocols. Here, we demonstrate the use of simple linear models to "correct" for different protocols and make data comparable. It is important to have a calibration experiment where all possible combinations of protocols are sampled from a common reality in order to make the corrections. However, once that has been done, this allows for extrapolating any scenario from the linear model for unknown samples. Importantly, any set of samples can be translated to the equivalent concentration of a different methodological choice. This is essential to responsibly combinine quantitative data collected via different methods, thereby facilitating the generation of larger sample sizes and larger spatial and temporal coverage for exploring broad-scale hypotheses. Future work could look at doing something similar with different species-specific assays for the same target species and determining how portable these parameter estimates are in relation to different assays and other water samples, especially considering other environmental factors like turbidity, salinity, or other parameters that might affect portability.
+
+## Conclusion
+
+Many publications exist comparing results from different methodological choices in eDNA protocols. However, here we approached this methodological comparison with a very specific goal of defining the metric to maximize, the ratio of target DNA to total DNA for a single species quantitative assay. We find that while smaller pore size filters collect more total DNA, the target DNA is similar and therefore a larger pore size filter with larger volumes of water filtered maximizes the target to total DNA ratio recovered. We also find that while different preservatives and extraction methods vary, the variance tends to be reflected by larger changes in total DNA yield rather than target DNA yield. Accordingly, we found that the extraction method with the highest target to total DNA ratio was from the commercially available kits rather than PCI. Finally, we introduce simple linear models to correct data sourced from samples with varying protocols, allowing researchers to utilize information from varying protocols in a responsible manner.
+
+## Acknowledgements
+
+This material is based upon research supported by the Office of Naval Research under Award Number (N00014-22-1-2719). The authors are grateful to U.S. Naval Base Kitsap-Bangor for logistic support. This study was supported through collaborative research efforts with the U.S. Navy's Marine Mammal Program. Any use of trade, firm, or product names is for descriptive purposes only and does not imply endorsement by the U.S. Government.
+
+## References

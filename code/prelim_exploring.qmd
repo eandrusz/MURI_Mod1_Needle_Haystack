@@ -35,6 +35,10 @@ Notes:
 
 ### Total DNA vs. Inhibition
 
+```{r}
+
+```
+
 Start by looking at inhibition levels as measured by IPC... nothing amplified at 1:1 dilution, and then samples were all diluted 1:10, and then further if still inhibited. We can use the "inhibition value" which is the difference in Ct between the IPC/NTC and the IPC/sample as an indication of how inhibited each sample is. A higher inhibition value means more inhibitors in the sample.
 
 We would expect that: - larger volumes of water should have more total DNA, but also more inhibitors (we are essentially concentrating the inhibitors in the sample) - the smaller pore size filter might have more inhibition given the same volume filtered
@@ -106,10 +110,13 @@ v_ps_tt_box <- ggplot(v_ps_tt, aes(x=vol_filtered, y=Tt_total_conc, fill=filter_
 
 ## NOW RATIO!!! 
 v_ps_tt <- v_ps_tt %>% 
-  mutate(ratio_tt_total = ((Tt_total_conc/1.132e+10)/DNA_total_conc)*100) 
+  mutate(DNA_total_copies_ul = (DNA_total_conc*6.022E23)/(80*618*10E9)) %>% 
+  mutate(ratio_tt_total = (Tt_total_conc/DNA_total_copies_ul))
 
-## target is 86 bp - use NEB https://nebiocalculator.neb.com/#!/dsdnaamt
-## 1.132e+10 copies of target = 1 ng of target 
+## target is 80 bp - use NEB https://nebiocalculator.neb.com/#!/dsdnaamt
+## 1.132e+10 copies of target = 1 ng of target --- OLD
+### instead use general 816 g/mol for average bp 
+
 
 v_ps_ratio_box <- ggplot(v_ps_tt, aes(x=vol_filtered, y=ratio_tt_total, fill=filter_size)) + 
   geom_boxplot() + 
@@ -270,11 +277,13 @@ ggplot(t3, aes(x=log10(d10_d1), y=inhibition_value, color=extraction, shape=pres
 ```{r}
 p_e <- p_e_raw %>% 
   filter(filter_v_liq == "filter") %>% # only keep samples used filter 
+  filter(smithroot_v_vaccum == "SR") %>% # only keep samples filtered on site 
   filter(inhibited==0) %>% # for now, only keep things not inhibited 
   mutate(quantity=as.numeric(quantity)) %>% 
   mutate(quantity2=dilution*quantity) %>% 
   mutate(total_DNA=as.numeric(total_DNA)) %>% 
-  mutate(ratio_tt_total = ((quantity2/1.132e+10)/total_DNA)*100) %>% 
+  mutate(DNA_total_copies_ul = (total_DNA*6.022E23)/(80*618*10E9)) %>% 
+  mutate(ratio_tt_total = (quantity2/DNA_total_copies_ul)) %>% 
   filter(dilution==10) # for now, just use 1:10 dilutions so we don't double count 
 
 ggplot(p_e, aes(x=total_DNA, y=log10(quantity2), color=preservation)) + 
@@ -295,10 +304,29 @@ ggplot(p_e, aes(x=extraction, y=log10(ratio_tt_total), fill=preservation)) +
   theme_bw() + 
   labs(y="Log10 Ratio of T. t to total DNA (%)", x = "Extraction Method", title = "Log10 Scale", fill="Preservation Method") 
 
+
+p1 <-  ggplot(p_e, aes(x=preservation, y=total_DNA, fill=extraction)) + 
+  geom_boxplot() + 
+  theme_bw() + 
+  labs(y="ng/uL", x = " ", title = "Total DNA",  fill="Extraction Method")
+
+p2 <-  ggplot(p_e, aes(x=preservation, y=log10(quantity2), fill=extraction)) + 
+  geom_boxplot() + 
+  theme_bw() + 
+  labs(y="Log10 copies/uL", x = " ", title = "Target DNA", fill="Extraction Method") 
+
+p3 <-  ggplot(p_e, aes(x=preservation, y=ratio_tt_total, fill=extraction)) + 
+  geom_boxplot() + 
+  theme_bw() + 
+  labs(y="Ratio", x = "Preservation Method", title = "Ratio Target:Total DNA", fill="Extraction Method")
+
+  
 # # put plots next to each other 
-# plot_grid(p_e_ratio_box_linear, p_e_ratio_box_log,
-#           labels = c("A", "B"),
-#           ncol = 2, nrow = 1, rel_widths = c(1,1.25))
+plot_grid(p1, p2, p3,
+          labels = c("A", "B", "C"),
+          ncol = 1, nrow = 3, rel_widths = c(.8,1.5,.8))
+
+ggsave(here("3panel.png"),width=6,height=8, units="in")
 
 ```
 
@@ -328,6 +356,14 @@ bio_var_stats <- bio_var %>%
   summarize(n=n(), meanconc = mean(quantity), sdconc=sd(quantity)) %>% 
   mutate(cv = sdconc/meanconc)
 
+compare_homogenized <- v_ps %>% 
+  filter(filter_size == "5um") %>% 
+  filter(vol_filtered == "3L") %>% 
+  filter(use==1) %>% 
+  summarize(n=n(), meanconc = mean(Tt_total_conc), sdconc=sd(Tt_total_conc)) %>% 
+  mutate(cv = sdconc/meanconc)
+  
+
 ggplot(bio_var_stats, aes(x=extraction, y=cv, color=preservation)) + 
   geom_point() +
   theme_bw() + 
@@ -340,6 +376,15 @@ ggplot(bio_var_stats, aes(x=extraction, y=meanconc, color=preservation)) +
   theme_bw() + 
   labs(x="Extraction Method", y="Mean Conc. (copies/uL)", color="Preservation") + 
   annotate("text", label="n = 9 (3 bio x 3 tech reps each)", y=2500,x=2.5 )
+
+ggplot(bio_var_stats, aes(x=preservation, y=cv, shape=extraction, color=extraction)) + 
+  geom_point(position=position_dodge(0.5), size=4) +
+  # geom_errorbar(aes(ymin=meanconc-sdconc, ymax=meanconc+sdconc), width=.2,
+  #                position=position_dodge(0.5)) + 
+  theme_bw() + 
+  geom_hline(yintercept=compare_homogenized$cv, linetype="longdash") + 
+  labs(x="Preservation Method", y="Coefficient of Variation", color="Extraction Method") 
+
 
 ```
 
@@ -404,4 +449,29 @@ v_ps_lm <- v_ps_tt %>%
 lm(inhibition_value ~ vol1 + ps1 , 
     data = v_ps_lm)
 
+```
+
+```{r}
+
+v_ps_merge <- v_ps_tt %>% 
+  select(c(lab_ID, rep, filter_size, vol_filtered, DNA_total_conc, Tt_total_conc, ratio_tt_total)) %>% 
+  mutate(preservation="longmires") %>% 
+  mutate(extraction="PCI") %>% 
+  mutate(experiment="v_ps") %>% 
+  mutate(homogenized = 1) %>% 
+  rename(sample=lab_ID, tech_rep=rep) %>% 
+  mutate(filter_size=as.numeric(str_extract(filter_size, "[0-9]+"))) %>% 
+  mutate(vol_filtered=as.numeric(str_extract(vol_filtered, "[0-9]+")))
+
+p_e_merge <- p_e %>% 
+  select(c(sample, tech_rep, preservation, extraction, total_DNA, quantity2, ratio_tt_total)) %>% 
+  mutate(filter_size=5) %>% 
+  mutate(vol_filtered=3) %>% 
+  mutate(experiment="p_e") %>% 
+  mutate(homogenized = 0) %>% 
+  rename(DNA_total_conc=total_DNA, Tt_total_conc=quantity2)
+
+experiments_merged2 <- rbind(v_ps_merge, p_e_merge)
+
+write_rds(experiments_merged2, file=here("data","experiments_merged.RDS"))
 ```

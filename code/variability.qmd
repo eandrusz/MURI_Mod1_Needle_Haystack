@@ -1,0 +1,139 @@
+---
+title: "variability"
+format: html
+editor: visual
+---
+
+```{r}
+library(here)
+library(tidyverse)
+library(ggplot2)
+library(cowplot)
+library(wesanderson)
+
+a <- read_rds(here("data","experiments_merged.RDS"))
+
+a <- a %>% 
+  mutate(preservation = case_when(preservation=="self-preserving" ~ "desiccation",
+                                  TRUE ~ preservation))
+
+v_ps <- a %>% filter(experiment=="v_ps")
+p_e <- a %>% filter(experiment=="p_e") %>% filter(preservation !="later")
+```
+
+## Variation
+
+```{r}
+
+v_ps_unique_treatment <- v_ps %>% 
+  select(c(sample, filter_size, vol_filtered)) %>% 
+  distinct() %>% 
+  unite(treatment, c(filter_size, vol_filtered), remove=FALSE) %>% 
+  mutate(treatment_idx = match(treatment, unique(treatment))) %>% 
+  select(c(sample,treatment_idx))
+
+v_ps_var <- v_ps %>% 
+  group_by(sample) %>% 
+  summarize(mean_conc= mean(Tt_total_conc), sd_conc = sd(Tt_total_conc)) %>% 
+  mutate(cv_tech = sd_conc/mean_conc) %>% 
+  left_join(v_ps %>% select(sample, vol_filtered, filter_size), by="sample") 
+
+v_ps_var2 <- v_ps %>% 
+  left_join(v_ps_unique_treatment, by="sample") %>% 
+  group_by(treatment_idx) %>% 
+  summarize(mean_conc_treatment= mean(Tt_total_conc), sd_conc_treatment = sd(Tt_total_conc)) %>% 
+  mutate(cv_bio = sd_conc_treatment/mean_conc_treatment) %>% 
+  left_join(v_ps_unique_treatment, by="treatment_idx") %>% 
+  left_join(v_ps %>% select(sample, vol_filtered, filter_size), by="sample")
+
+v_ps_adj <- v_ps %>% 
+  mutate(adj_conc = Tt_total_conc/vol_filtered)
+
+v_ps_all_mean <- mean(v_ps$Tt_total_conc)
+v_ps_all_sd <- sd(v_ps$Tt_total_conc)
+v_ps_all_cv <- v_ps_all_sd/v_ps_all_mean
+
+v_ps_adj_mean <- mean(v_ps_adj$adj_conc)
+v_ps_adj_sd <- sd(v_ps_adj$adj_conc)
+v_ps_adj_cv <- v_ps_adj_sd/v_ps_adj_mean
+
+pp1 <- ggplot() +
+  geom_point(data=v_ps_var, aes(x=vol_filtered, y=cv_tech, shape="Technical Replicate CV", color=factor(filter_size)),
+             size=4, position=position_nudge(x = -0.2)) +
+  geom_point(data=v_ps_var2, aes(x=vol_filtered, y=cv_bio, shape="Biological Replicate CV", color=factor(filter_size)), 
+             size=4, position=position_nudge(x = 0.2)) + 
+  geom_hline(aes(yintercept=v_ps_all_cv), linetype=2) +
+  geom_hline(aes(yintercept=v_ps_adj_cv), linetype=3) +
+  ylim(0,1) +
+  scale_x_continuous(breaks = seq(1, 3, 2), 
+                     limits=c(0, 4)) +
+  scale_shape_manual(breaks= c("Technical Replicate CV", "Biological Replicate CV"), values = c("Technical Replicate CV" = 4, "Biological Replicate CV" = 19)) +
+  scale_color_manual(breaks= c("1", "5"), values = c("1" = wes_palette(n=4, name="Chevalier1")[1], "5"=wes_palette(n=4, name="Chevalier1")[4])) +
+  theme_bw() +
+  labs(x="Volume Filtered", y="Target DNA CV", shape= "Type of Replicate", color="Filter Pore Size (um)", title="Volume / Pore Size Samples")
+
+#ggsave(here("figures","cv_vps.png"), width=8, height=5, units="in")
+
+```
+
+## Now P/E 
+
+```{r}
+
+p_e_unique_treatment <- p_e %>% 
+  select(c(sample, preservation, extraction)) %>% 
+  distinct() %>% 
+  unite(treatment, c(preservation, extraction), remove=FALSE) %>% 
+  mutate(treatment_idx = match(treatment, unique(treatment))) %>% 
+  select(c(sample,treatment_idx))
+
+p_e_var <- p_e %>% 
+  group_by(sample) %>% 
+  summarize(mean_conc= mean(Tt_total_conc), sd_conc = sd(Tt_total_conc)) %>% 
+  mutate(cv_tech = sd_conc/mean_conc) %>% 
+  left_join(p_e %>% select(sample, preservation, extraction), by="sample") 
+
+p_e_var2 <- p_e %>% 
+  left_join(p_e_unique_treatment, by="sample") %>% 
+  group_by(treatment_idx) %>% 
+  summarize(mean_conc_treatment= mean(Tt_total_conc), sd_conc_treatment = sd(Tt_total_conc)) %>% 
+  mutate(cv_bio = sd_conc_treatment/mean_conc_treatment) %>% 
+  left_join(p_e_unique_treatment, by="treatment_idx") %>% 
+  left_join(p_e %>% select(sample, preservation, extraction), by="sample")
+
+p_e_all_mean <- mean(p_e$Tt_total_conc)
+p_e_all_sd <- sd(p_e$Tt_total_conc)
+p_e_all_cv <- p_e_all_sd/p_e_all_mean
+
+
+pp2 <- ggplot() +
+  geom_point(data=p_e_var, aes(x=preservation, y=cv_tech, shape="Technical Replicate CV", color=factor(extraction)),
+             size=4, position=position_nudge(x = -0.2)) +
+  geom_point(data=p_e_var2, aes(x=preservation, y=cv_bio, shape="Biological Replicate CV", color=factor(extraction)), 
+             size=4, position=position_nudge(x = 0.2)) + 
+  geom_hline(aes(yintercept=p_e_all_cv), linetype=2) +
+  ylim(0,1) +
+  scale_shape_manual(breaks= c("Technical Replicate CV", "Biological Replicate CV"), values = c("Technical Replicate CV" = 4, "Biological Replicate CV" = 19)) +
+  theme_bw() +
+  scale_color_manual(values=wes_palette(n=4, name="GrandBudapest1"), labels = c("PCI", "Qiagen","Zymo")) +
+  labs(x="Preservation Method", y="Target DNA CV", shape= "Type of Replicate", color="Extraction Method", title="Preservation / Extraction Samples")
+
+plot_grid(pp1, pp2,
+          labels = c("A", "B"),
+          ncol = 1, nrow = 2)
+
+ggsave(here("figures","cv_2panel.png"),width=6,height=6, units="in")
+
+
+
+
+```
+
+```{r}
+v_ps_var2 %>% 
+  summarize(meancv = mean(cv_bio))
+
+p_e_var2 %>% 
+  summarize(meancv = mean(cv_bio))
+
+```
