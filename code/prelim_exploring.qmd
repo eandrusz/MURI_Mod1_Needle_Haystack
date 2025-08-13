@@ -140,6 +140,14 @@ v_ps_tt_summary <- v_ps_tt %>%
   mutate(ratio_cv = sd_ratio/mean_ratio)
 
 rmarkdown::paged_table(v_ps_tt_summary)
+
+
+#### try plotting target on y and total on x
+ggplot(v_ps_tt, aes(x=DNA_total_conc, y=Tt_total_conc, color=filter_size)) + 
+  geom_point() + 
+  theme_bw() + 
+  facet_wrap(~vol_filtered, scales="free") + 
+  labs(y="Target DNA (copies/L)", x = "Total DNA (ng/ul)", color="Pore Size (um)")
 ```
 
 Ok so this is super interesting. In Panel A, we see that total DNA is higher in 1 um pore size over 5 um pore size (we saw that above also). We also see that the 3x increase in volume filtered results in more than 3x total DNA. This might be the same mechanistic explanation as the pore size. Over 3L of filtration, the effective pore size of each filter (1 or 5 um) is reduced as stuff accumulates on the filter. If smaller pore size filters collect more stuff, then we would expect as more volume is fitlered and the effective pore size decreases, we get more than a linear increase in stuff collected. And as a sanity check, the jump from 1L to 3L in the 1 um pore size is larger than the jump from 1L to 3L in the 5 um pore size filtering.

@@ -133,3 +133,50 @@ Compare across the two experiments with only the same setup (3 L, 5 um, longmire
 # ggsave(here("figures","justratio.png"))
 
 ```
+
+```{r}
+
+ratio15 <- a %>% 
+  #select(sample, filter_size, vol_filtered, DNA_total_conc, Tt_total_conc) %>% 
+  select(-sample) %>% 
+  select(-tech_rep) %>% 
+  drop_na() %>% 
+  group_by(preservation, extraction, experiment, filter_size, vol_filtered) %>% 
+  mutate(meantotal= mean(DNA_total_conc), meantarget=mean(Tt_total_conc)) %>% 
+  select(c(preservation, extraction, experiment, filter_size, vol_filtered, meantotal, meantarget)) %>% 
+  distinct() %>% 
+  unite(uniquecase, c(experiment,vol_filtered,preservation, extraction)) 
+
+ratio15_total <- ratio15 %>% 
+  select(-meantarget) %>% 
+  pivot_wider(names_from= filter_size, values_from=meantotal) %>% 
+  drop_na() %>% 
+  rename(onemicron='1', fivemicron='5') %>% 
+  mutate(ratio1to5total = onemicron/fivemicron)
+
+
+ratio15_target <- ratio15 %>% 
+  select(-meantotal) %>% 
+  pivot_wider(names_from= filter_size, values_from=meantarget) %>% 
+  drop_na() %>% 
+  rename(onemicron='1', fivemicron='5') %>% 
+  mutate(ratio1to5target = onemicron/fivemicron)
+
+```
+
+### Target vs. total DNA plots
+
+```{r}
+
+#### try plotting target on y and total on x
+
+ggplot(a %>% filter(experiment=="v_ps"),
+       aes(x=DNA_total_conc, y=Tt_total_conc, color=factor(filter_size))) + 
+  geom_point() + theme_bw() + facet_wrap(~vol_filtered, scales="free") + labs(y="Target DNA (copies/L)", x = "Total DNA (ng/ul)", color="Pore Size (um)")
+
+
+ggplot(a %>% filter(experiment=="p_e"),
+       aes(x=DNA_total_conc, y=Tt_total_conc, color=factor(preservation))) + 
+  geom_point() + theme_bw() + facet_wrap(~extraction, scales="free") + labs(y="Target DNA (copies/L)", x = "Total DNA (ng/ul)", color="Preservation Method")
+
+```

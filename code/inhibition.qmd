@@ -85,10 +85,62 @@ ggsave(here("figures","SUPFIG4_p_e_inhibition.png"))
 Try linear model to see if preservative or extraction method explain inhibition
 
 ```{r}
+dilution_stats <- a %>% select(c(experiment, sample, tech_rep, inhibited, dilution_factor)) %>% distinct()
 
-testlm <- glm(inhibition_value ~ DNA_total_conc + preservation + extraction,
-  data = a)
+dilution_stats2 <- dilution_stats %>% 
+  filter(inhibited==0) %>% 
+  arrange(sample, tech_rep, dilution_factor) %>% 
+  group_by(sample, tech_rep) %>%
+  slice(1)
 
-summary(testglm)
+dilution_stats3 <- dilution_stats2 %>% 
+  left_join(a %>% select(c(sample,vol_filtered, filter_size, preservation, extraction)), by="sample") %>% 
+  distinct()
 
+```
+
+## Linear model 
+
+```{r}
+
+pe_data <- dilution_stats3 %>% 
+  filter(experiment=="p_e") %>% 
+  select(c(sample, dilution_factor, preservation, extraction))
+pe_data$preservation = as.factor(pe_data$preservation)
+pe_data$extraction = as.factor(pe_data$extraction)
+
+pe_model <- lm(dilution_factor ~ preservation + extraction, 
+               data = pe_data)
+summary(pe_model)
+
+
+vps_data <- dilution_stats3 %>% 
+  filter(experiment=="v_ps") %>% 
+  select(c(sample, dilution_factor, vol_filtered, filter_size))
+vps_data$vol_filtered = as.factor(vps_data$vol_filtered)
+vps_data$filter_size = as.factor(vps_data$filter_size)
+
+vps_model <- lm(dilution_factor ~ vol_filtered + filter_size, 
+               data = vps_data)
+summary(vps_model)
+
+
+
+
+# full_model <- lm(dilution_factor ~ vol_filtered*experiment + filter_size*experiment + 
+#                   preservation*experiment + extraction*experiment, data = dilution_stats3)
+# summary(full_model)
+# 
+# # Create diagnostic plots to check model assumptions
+# par(mfrow = c(2, 2))
+# plot(full_model)
+# 
+# # Visualize relationships
+# ggplot(dilution_stats3, aes(x = vol_filtered, y = dilution_factor, color = experiment)) +
+#   geom_point() +
+#   geom_smooth(method = "lm") +
+#   facet_wrap(~experiment) +
+#   labs(title = "Relationship between Volume Filtered and Dilution Factor",
+#        x = "Volume Filtered",
+#        y = "Dilution Factor")
 ```

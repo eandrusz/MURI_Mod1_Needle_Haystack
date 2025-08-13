@@ -4,16 +4,18 @@ format: html
 editor: visual
 ---
 
-## Organizing and combining two datasets 
+## Organizing and combining two datasets
 
-### R set up 
+### R set up
+
 ```{r}
 library(here)
 library(tidyverse)
 
 ```
 
-### Volume and pore size dataset 
+### Volume and pore size dataset
+
 ```{r}
 v_ps_raw <- read.csv(here("data","MURI_Module1_datasheets - 01_bangor_fielddeployment1_Sept2022.csv"))
 
@@ -55,7 +57,7 @@ v_ps_merge <- v_ps_tt %>%
 
 ```
 
-Now let's deal with the other experiment 
+Now let's deal with the other experiment
 
 ```{r}
 p_e_raw <- read.csv(here("data","MURI_Module1_datasheets - 06_matrix_Mar2023.csv"))
@@ -76,7 +78,7 @@ p_e_merge <- p_e %>%
 
 ```
 
-Now let's merge them together 
+Now let's merge them together
 
 ```{r}
 
@@ -95,7 +97,7 @@ write_rds(all_data, here("data","experiments_merged.RDS"))
 write_csv(all_data, here("data","experiments_merged.csv"))
 ```
 
-Now we need to keep things that were inhibited to look at inhibition 
+Now we need to keep things that were inhibited to look at inhibition
 
 ```{r}
 
